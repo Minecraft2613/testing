@@ -1,33 +1,33 @@
-// menu.js – Sidebar toggle and navigation handling
+// menu.js — Sidebar and Navigation Handling
 
-// Elements
-const menuToggle = document.getElementById("menu-toggle");
-const sidebar = document.getElementById("sidebar");
-const contentOverlay = document.getElementById("overlay");
-const menuLinks = document.querySelectorAll(".menu-link");
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.querySelector(".sidebar");
+  const hamburger = document.getElementById("hamburger");
 
-// Toggle sidebar
-menuToggle.addEventListener("click", () => {
-  sidebar.classList.toggle("open");
-  contentOverlay.style.display = sidebar.classList.contains("open") ? "block" : "none";
-});
+  if (hamburger && sidebar) {
+    hamburger.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
+  }
 
-// Hide sidebar when overlay clicked
-contentOverlay.addEventListener("click", () => {
-  sidebar.classList.remove("open");
-  contentOverlay.style.display = "none";
-});
+  window.openSection = function (sec) {
+    const navList = [
+      "server-info",
+      "server-status",
+      "plugin-list",
+      "profile",
+      "support",
+      "players"
+    ];
 
-// Navigation logic
-menuLinks.forEach(link => {
-  link.addEventListener("click", e => {
-    e.preventDefault();
-    const sectionId = link.getAttribute("href").substring(1);
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-      sidebar.classList.remove("open");
-      contentOverlay.style.display = "none";
-    }
-  });
+    navList.forEach((s) => {
+      const el = document.getElementById(s);
+      if (el) el.classList.add("hidden");
+    });
+
+    const active = document.getElementById(sec);
+    if (active) active.classList.remove("hidden");
+
+    if (sidebar) sidebar.classList.remove("open");
+  };
 });
