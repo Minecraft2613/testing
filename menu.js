@@ -1,62 +1,61 @@
-// menu.js - Handles sidebar menu actions
-
 document.addEventListener("DOMContentLoaded", () => {
   const menuToggle = document.getElementById("menu-toggle");
   const sidebar = document.getElementById("sidebar");
-  const contentArea = document.getElementById("content-area");
+  const closeBtn = document.getElementById("menu-close");
+  const taxBtn = document.getElementById("menu-tax");
+  const formBtn = document.getElementById("menu-form");
+  const playersBtn = document.getElementById("menu-players");
+  const supportBtn = document.getElementById("menu-support");
+  const accountBtn = document.getElementById("menu-account");
 
-  // ✅ Safe check to avoid null errors
-  if (menuToggle && sidebar) {
+  if (menuToggle && sidebar && closeBtn) {
+    // Open sidebar
     menuToggle.addEventListener("click", () => {
       sidebar.classList.toggle("hidden");
     });
-  }
 
-  // Close sidebar when clicking close
-  const closeBtn = document.getElementById("menu-close");
-  if (closeBtn) {
-    closeBtn.addEventListener("click", () => sidebar.classList.add("hidden"));
-  }
+    // Close sidebar
+    closeBtn.addEventListener("click", () => {
+      sidebar.classList.add("hidden");
+    });
 
-  // Menu click handlers
-  const menuActions = {
-    "menu-account": showAccount,
-    "menu-tax": () => window.open("https://minecraft2613.github.io/taxess/", "_blank"),
-    "menu-form": () => window.open("https://minecraft2613.github.io/joining-form/", "_blank"),
-    "menu-support": showSupport,
-    "menu-players": showPlayers
-  };
+    // Open Tax Portal in new tab
+    taxBtn.addEventListener("click", () => {
+      window.open("https://minecraft2613.github.io/taxess/", "_blank");
+    });
 
-  Object.keys(menuActions).forEach(id => {
-    const item = document.getElementById(id);
-    if (item) {
-      item.addEventListener("click", e => {
-        e.preventDefault();
-        sidebar.classList.add("hidden");
-        menuActions[id]();
-      });
-    }
-  });
+    // Open Joining Form in new tab
+    formBtn.addEventListener("click", () => {
+      window.open("https://minecraft2613.github.io/joining-form/", "_blank");
+    });
 
-  // Placeholder functions
-  function showAccount() {
-    contentArea.innerHTML = `
-      <h2>👤 Account Profile</h2>
-      <p>Manage your account details here.</p>
-    `;
-  }
+    // Support options
+    supportBtn.addEventListener("click", () => {
+      alert("📞 Contact us on:\nDiscord: @Ansh_2613\nInstagram: @minecraft_2613");
+    });
 
-  function showSupport() {
-    contentArea.innerHTML = `
-      <h2>📞 Support</h2>
-      <p>Contact us on Discord: <strong>@Minecraft2613</strong><br>Instagram: <strong>@minecraft.2613</strong></p>
-    `;
-  }
+    // Players list (can be replaced with custom player list HTML)
+    playersBtn.addEventListener("click", () => {
+      document.getElementById("content-area").innerHTML = `
+        <h2>👥 Active Players</h2>
+        <ul>
+          <li>Player1</li>
+          <li>Player2</li>
+          <li>Player3</li>
+          <!-- Replace with dynamic list if needed -->
+        </ul>
+      `;
+    });
 
-  function showPlayers() {
-    contentArea.innerHTML = `
-      <h2>👥 Players</h2>
-      <p>List of active players will appear here.</p>
-    `;
+    // Account section (loads login/profile UI)
+    accountBtn.addEventListener("click", () => {
+      document.getElementById("content-area").innerHTML = `
+        <h2>👤 Account</h2>
+        <p>Manage your profile, update details, or logout.</p>
+        <button onclick="location.reload()">🔁 Re-login</button>
+      `;
+    });
+  } else {
+    console.warn("Some sidebar elements not found in DOM.");
   }
 });
