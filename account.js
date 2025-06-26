@@ -1,71 +1,54 @@
-// account.js - Login/Create + Cloudflare Sync
+// account.js — Login/Create + Cloudflare Sync
 
-const CLOUDFLARE_ENDPOINT = "https://minecraft-details-acc.1987sakshamsingh.workers.dev/";
-const updateMode = false;
-const allowedUsername = "Ansh_2613";
+const ENDPOINT = "https://minecraft-details-acc.1987sakshamsingh.workers.dev/";
+const loginEl = document.getElementById("login-section");
+const mainEl = document.getElementById("main-content");
 
-function setupAccountForm() {
-  const loginSection = document.getElementById("login-section");
-  const form = document.createElement("form");
-  form.id = "login-form";
-  form.innerHTML = `
-    <h2>🔐 Login or Create Account</h2>
-    <input type="text" id="username" placeholder="FreeMcServer Username" required><br>
-    <input type="text" id="accountId" placeholder="Account ID (for new users)" required><br>
-    <input type="text" id="discord" placeholder="Discord ID (optional)"><br>
-    <input type="text" id="instagram" placeholder="Instagram (optional)"><br>
-    <label><input type="checkbox" id="agreeCheck"> I agree to the <a href="https://minecraft2613.github.io/Minecarft-2613-Rules/" target="_blank">rules</a></label>
-    <br><button type="submit" id="loginBtn" disabled>🔓 Submit</button>
+function showMain() {
+  loginEl.classList.add("hidden");
+  mainEl.classList.remove("hidden");
+}
+
+function setupForm() {
+  const f = document.createElement("form");
+  f.innerHTML = `
+    <h2>🔐 Login / Create</h2>
+    <input id="u" placeholder="Username" required>
+    <input id="aid" placeholder="Account ID" required>
+    <input id="dis" placeholder="Discord (opt)">
+    <input id="inst" placeholder="Instagram (opt)">
+    <label><input type="checkbox" id="agree"> Agree rules</label>
+    <button type="submit" id="btn" disabled>✅ Submit</button>
   `;
-  loginSection.appendChild(form);
+  loginEl.appendChild(f);
+  f.querySelector("#agree").onchange = e => f.querySelector("#btn").disabled = !e.target.checked;
 
-  document.getElementById("agreeCheck").addEventListener("change", e => {
-    document.getElementById("loginBtn").disabled = !e.target.checked;
-  });
-
-  form.addEventListener("submit", async e => {
+  f.addEventListener("submit", async e => {
     e.preventDefault();
-    const username = document.getElementById("username").value.trim();
-    const accountId = document.getElementById("accountId").value.trim();
-    const discord = document.getElementById("discord").value.trim();
-    const instagram = document.getElementById("instagram").value.trim();
-
-    if (!username || !accountId) return alert("Username and ID required");
-    if (updateMode && username !== allowedUsername) return showUpdateNotice();
-
-    const data = { username, accountId, discord, instagram };
-    localStorage.setItem("freemc_username", username);
-    sessionStorage.setItem("loggedIn", "true");
-
+    const data = {
+      username: f.u.value.trim(),
+      accountId: f.aid.value.trim(),
+      discord: f.dis.value.trim(),
+      instagram: f.inst.value.trim()
+    };
+    if (!data.username||!data.accountId) return alert("Enter required");
     try {
-      await fetch(CLOUDFLARE_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+      const res = await fetch(ENDPOINT, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(data)
       });
-      showMainUI();
-    } catch (err) {
-      alert("❌ Sync failed. Try again later.");
+      if(!res.ok) throw '';
+      localStorage.setItem("user", data.username);
+      sessionStorage.setItem("loggedIn","true");
+      showMain();
+    } catch {
+      alert("Sync failed");
     }
   });
 }
 
-function showUpdateNotice() {
-  document.body.innerHTML = `<div style="text-align:center;padding:60px;"><h2>🚧 Under Maintenance</h2><p>Only staff can access right now.</p></div>`;
-}
-
-function showMainUI() {
-  document.getElementById("login-section").style.display = "none";
-  document.getElementById("main-content").style.display = "block";
-  document.getElementById("form-sidebar")?.classList.add("show");
-}
-
 window.addEventListener("DOMContentLoaded", () => {
-  const user = localStorage.getItem("freemc_username");
-  const ok = sessionStorage.getItem("loggedIn") === "true";
-
-  if (updateMode && user !== allowedUsername) return showUpdateNotice();
-  if (user && ok) return showMainUI();
-
-  setupAccountForm();
+  if (sessionStorage.getItem("loggedIn")==="true") showMain();
+  else setupForm();
 });
