@@ -1,46 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width">
-  <title>Modern Minecraft Panel</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minecraft Server Portal</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div id="loader"><div class="loader-ring"></div></div>
+  <!-- Loading Animation -->
+  <div id="loader"><div class="spinner"></div></div>
 
-  <div class="sidebar hidden">
-    <h3>🔧 Menu</h3>
-    <button onclick="openSection('server-info')">🌐 Info</button>
-    <button onclick="openSection('server-status')">📈 Status</button>
-    <button onclick="openSection('plugin-list')">🔌 Plugins</button>
-    <button onclick="openSection('profile')">👤 Profile</button>
-    <button onclick="openSection('support')">💬 Support</button>
-    <button onclick="openSection('players')">👥 Players</button>
-    <button onclick="window.open('https://minecraft2613.github.io/taxess/', '_blank')">📊 Tax</button>
-    <button onclick="window.open('https://minecraft2613.github.io/joining-form/', '_blank')">📝 Form</button>
-  </div>
-
-  <header>
-    <button id="hamburger">☰</button>
-    <h1>🌍 Minecraft Server</h1>
-  </header>
-
+  <!-- Login Section -->
   <section id="login-section"></section>
 
-  <main id="main-content" class="hidden">
-    <section id="server-info" class="hidden"></section>
-    <section id="server-status" class="hidden"></section>
-    <section id="plugin-list" class="hidden"></section>
-    <section id="profile" class="hidden"><h2>👤 Profile</h2><p>Username: <span id="u"></span></p></section>
-    <section id="support" class="hidden"><h2>💬 Support</h2><p>Discord: @Server</p></section>
-    <section id="players" class="hidden"></section>
-  </main>
+  <!-- Main Content -->
+  <div id="main-content" style="display:none;">
+    <!-- Header -->
+    <header>
+      <button id="menu-toggle">☰</button>
+      <h1>🎮 Minecraft Server Panel</h1>
+    </header>
 
-  <script src="account.js"></script>
-  <script src="menu.js"></script>
-  <script src="homepage.js"></script>
-  <script>
-    window.onload = () => document.getElementById("loader").remove();
-  </script>
+    <!-- Sidebar -->
+    <nav id="sidebar" class="hidden">
+      <ul>
+        <li><a href="#" id="menu-account">👤 Account</a></li>
+        <li><a href="#" id="menu-tax">💰 View Tax</a></li>
+        <li><a href="#" id="menu-form">📝 Joining Form</a></li>
+        <li><a href="#" id="menu-support">📞 Support</a></li>
+        <li><a href="#" id="menu-players">👥 Players</a></li>
+        <li><a href="#" id="menu-close">❌ Close</a></li>
+      </ul>
+    </nav>
+
+    <!-- Dynamic Content Area -->
+    <main id="content-area">
+      <!-- homepage.js will populate server info, plugin list, and status -->
+    </main>
+  </div>
+
+  <!-- JavaScript Files -->
+  <script src="js/account.js" defer></script>
+  <script src="js/menu.js" defer></script>
+  <script src="js/homepage.js" defer></script>
 </body>
 </html>
