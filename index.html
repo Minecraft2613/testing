@@ -96,6 +96,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            text-decoration: none; /* For button acting as a link */
         }
 
         button:hover {
@@ -227,6 +228,25 @@
             gap: 15px;
             margin-top: 20px;
         }
+        /* Style for the agreement checkbox */
+        #auth-form-main .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        #auth-form-main .checkbox-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            cursor: pointer;
+        }
+        #auth-form-main .checkbox-container label {
+            font-size: 0.95em;
+            color: #ccc;
+        }
+
 
         #auth-message-main {
             text-align: center;
@@ -270,7 +290,7 @@
         header h1 {
             color: var(--accent-green);
             font-size: 3em;
-            margin: 0 0 20px 0; /* Margin below title, above actual content */
+            margin: 0; /* Remove margin below title in header */
             text-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
         }
 
@@ -289,6 +309,71 @@
         }
         .navbar-toggle:hover {
             background: #3a3a3a;
+        }
+        /* Top-right profile area */
+        .header-profile {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+            z-index: 50; /* Ensure it's above other header elements if needed */
+        }
+        .header-profile .profile-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #3a3a3a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--accent-green);
+            border: 2px solid var(--accent-green);
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+        .header-profile .profile-avatar-small:hover {
+            transform: scale(1.1);
+        }
+        .header-profile .profile-avatar-small img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .header-profile .profile-dropdown {
+            position: absolute;
+            top: 50px; /* Below the avatar */
+            right: 0;
+            background-color: var(--sidebar-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            display: none;
+            flex-direction: column;
+            padding: 10px 0;
+            min-width: 180px;
+            z-index: 60;
+        }
+        .header-profile .profile-dropdown.active {
+            display: flex;
+        }
+        .header-profile .profile-dropdown a {
+            padding: 10px 15px;
+            color: var(--text-light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.2s ease;
+        }
+        .header-profile .profile-dropdown a:hover {
+            background-color: #2a2a2a;
+            color: var(--accent-green);
         }
 
         /* Homepage Content - Contains the 3 main buttons */
@@ -319,16 +404,30 @@
         }
 
         #main-nav-buttons button {
-            padding: 8px 15px; /* Even smaller padding */
-            font-size: 1.1em; /* Smaller font size */
-            border-radius: 8px; /* Slightly smaller border-radius */
+            padding: 8px 15px; /* Adjust padding for smaller buttons */
+            font-size: 1.1em; /* Adjust font size */
+            height: 60px; /* Fixed height to accommodate emoji and text */
+            flex: 1 1 180px; /* Adjust basis for 3 columns on larger screens */
+            max-width: 32%; /* Max width for 3 columns */
+            display: flex;
+            flex-direction: column; /* Stack emoji and text */
+            align-items: center;
+            justify-content: center;
+            gap: 5px; /* Space between emoji and text */
             background-color: var(--accent-blue);
             color: white;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.3); /* Smaller shadow */
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
-            flex: 1 1 180px; /* Adjust basis for smaller buttons, 3 columns */
-            max-width: 32%; /* Max width for 3 columns */
-            font-weight: 600; /* Slightly less bold */
+            font-weight: 600;
+        }
+        #main-nav-buttons button span {
+            font-size: 1.8em; /* Emoji size */
+            line-height: 1; /* Remove extra space above/below emoji */
+        }
+        #main-nav-buttons button span.button-text {
+            font-size: 0.8em; /* Smaller text below emoji */
+            font-weight: 600;
+            color: #eee;
         }
 
         #main-nav-buttons button:hover {
@@ -506,12 +605,6 @@
             box-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
         }
 
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
         .profile-avatar input[type="file"] {
             position: absolute;
             top: 0;
@@ -557,6 +650,29 @@
             margin-bottom: -10px; /* Pull label closer to input */
         }
         #profile-form input {
+            width: calc(100% - 24px);
+        }
+
+        /* Change Password Section */
+        #change-password-content {
+            max-width: 500px;
+            margin: 20px auto;
+            background-color: #2a2a2a;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+        #change-password-content form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        #change-password-content label {
+            color: #ccc;
+            font-size: 0.95em;
+            margin-bottom: -10px;
+        }
+        #change-password-content input[type="password"] {
             width: calc(100% - 24px);
         }
 
@@ -620,6 +736,8 @@
         }
         #server-info-content .status-online { color: #8bc34a; }
         #server-info-content .status-offline { color: var(--accent-red); }
+        #server-info-content .status-expired { color: #ff8c00; } /* Orange for Expired */
+
 
         #server-info-content .player-list {
             list-style: none;
@@ -889,6 +1007,24 @@
             color: var(--accent-red);
         }
 
+        /* Rules Section */
+        #rules-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        #rules-content li {
+            background-color: #2a2a2a;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-left: 5px solid var(--accent-green);
+            border-radius: 8px;
+        }
+        #rules-content li strong {
+            color: var(--accent-green);
+            display: block;
+            margin-bottom: 5px;
+        }
+
         /* Theme Settings Section */
         #theme-settings-content #themePanel {
             position: static; /* No longer fixed */
@@ -966,6 +1102,13 @@
                 max-width: 100%; /* Full width for stacked buttons */
                 font-size: 1.1em; /* Adjusted for smaller screens */
                 padding: 15px 20px;
+                height: auto; /* Allow height to adjust */
+            }
+            #main-nav-buttons button span {
+                font-size: 2em; /* Keep emoji large */
+            }
+            #main-nav-buttons button span.button-text {
+                font-size: 0.9em; /* Adjust text size */
             }
             #main-content-wrapper {
                 padding: 10px;
@@ -1018,6 +1161,21 @@
             #players-content .player-sub-nav button {
                 width: 100%;
                 max-width: 300px;
+            }
+            .header-profile {
+                position: static; /* Remove absolute positioning */
+                margin-top: 15px; /* Space below title */
+                width: 100%;
+                justify-content: flex-end; /* Align right */
+            }
+            .header-profile .profile-dropdown {
+                top: auto;
+                bottom: -10px; /* Position above on small screens */
+                right: 0;
+                transform: translateY(100%); /* Slide up from bottom */
+            }
+            .header-profile .profile-dropdown.active {
+                transform: translateY(0%);
             }
         }
 
@@ -1105,28 +1263,80 @@
             #themePanel { /* This now lives inside #theme-settings-content */
                 margin: 0;
             }
+            .header-profile {
+                margin-top: 10px; /* Adjust margin for very small screens */
+            }
         }
 
-        /* Overlay for sidebar */
-        .overlay {
+        /* Message Box for alerts (replaces alert()) */
+        .message-box-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.7);
-            z-index: 999; /* Below sidebar, above main content */
-            display: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001; /* Above everything */
+            opacity: 0;
+            pointer-events: none;
             transition: opacity 0.3s ease;
         }
-        .overlay.active {
-            display: block;
+        .message-box-overlay.active {
             opacity: 1;
+            pointer-events: all;
+        }
+        .message-box {
+            background-color: var(--box-color);
+            border: 1px solid var(--accent-green);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .message-box-overlay.active .message-box {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .message-box h3 {
+            color: var(--accent-green);
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .message-box p {
+            color: var(--text-light);
+            margin-bottom: 25px;
+        }
+        .message-box button {
+            background-color: var(--accent-blue);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .message-box button:hover {
+            background-color: #5b9bd5;
         }
 
     </style>
 </head>
 <body>
+    <div id="message-box-overlay" class="message-box-overlay">
+        <div class="message-box">
+            <h3 id="message-box-title"></h3>
+            <p id="message-box-content"></p>
+            <button id="message-box-close-btn">OK</button>
+        </div>
+    </div>
+
     <div id="loading-screen">
         <div class="loading-spinner"></div>
         <p>Loading Minecraft Experience...</p>
@@ -1134,20 +1344,24 @@
 
     <div id="auth-screen">
         <div id="auth-panel">
-            <h2>🔐 Welcome, Miner!</h2>
-            <p>Login or Create Account to access the Server Hub.</p>
+            <h2 id="auth-welcome-message">✨ Join the Adventure, Miner!</h2>
             <form id="auth-form-main">
                 <input type="email" id="auth-email-input" placeholder="Email" required>
                 <input type="password" id="auth-password-input" placeholder="Password" required>
                 <input type="text" id="auth-minecraft-username-input" placeholder="Minecraft Username" style="display: none;">
                 <input type="text" id="auth-account-name-input" placeholder="Account Name" style="display: none;">
-                <button type="submit" id="main-login-btn" style="background-color: var(--accent-blue);">Login</button>
-                <button type="button" id="main-create-account-btn" style="background-color: var(--accent-dark-blue);">Create Account</button>
+                <div class="checkbox-container" id="rules-checkbox-container" style="display: none;">
+                    <input type="checkbox" id="agree-rules-checkbox">
+                    <label for="agree-rules-checkbox">I agree to the <a href="#" onclick="showSection('rules-content'); return false;">Minecraft Server Rules</a></label>
+                </div>
+
+                <button type="submit" id="main-auth-submit-btn" style="background-color: var(--accent-blue);">Login</button>
+                <p id="auth-message-main"></p>
+
+                <div style="margin-top: 15px; border-top: 1px dashed #333; padding-top: 15px;">
+                    <button type="button" id="toggle-auth-mode-btn" style="background-color: var(--accent-dark-blue);">Create Account</button>
+                </div>
             </form>
-            <p id="auth-message-main"></p>
-            <p style="margin-top: 25px; font-size: 0.9em; color: #aaa;">
-                First time here? Create an account! Or if you just need to access the FreeMcServer gateway, <a href="https://freemcserver.net" target="_blank">visit FreeMcServer.net</a>.
-            </p>
         </div>
     </div>
 
@@ -1155,6 +1369,16 @@
         <header>
             <button class="navbar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
             <h1>🔥 Minecraft Server Hub</h1>
+            <div class="header-profile" id="header-profile-display">
+                <div class="profile-avatar-small" id="header-profile-avatar">
+                    <span id="header-profile-initial"></span>
+                    <img id="header-profile-image" src="" alt="Profile Pic" style="display: none;">
+                </div>
+                <div class="profile-dropdown" id="profile-dropdown-menu">
+                    <a href="#" onclick="showSection('account-settings-content'); toggleProfileDropdown(); return false;"><i class="fas fa-user-cog"></i> View Profile</a>
+                    <a href="#" onclick="showSection('change-password-content'); toggleProfileDropdown(); return false;"><i class="fas fa-key"></i> Change Password</a>
+                </div>
+            </div>
         </header>
 
         <main class="main-content-area">
@@ -1165,9 +1389,10 @@
                         <li><a href="#" data-section="server-info-content" class="active"><i class="fas fa-home"></i> Home</a></li>
                         <li><a href="#" data-section="account-settings-content"><i class="fas fa-user-cog"></i> Account Settings</a></li>
                         <li><a href="https://minecraft2613.github.io/taxess/" target="_blank"><i class="fas fa-money-check-alt"></i> View Your Tax</a></li>
-                        <li><a href="#" data-section="players-content"><i class="fas fa-users"></i> Players</a></li> <li><a href="#" data-section="forms-content"><i class="fas fa-file-alt"></i> Forms</a></li>
+                        <li><a href="#" data-section="players-content"><i class="fas fa-users"></i> Players</a></li>
+                        <li><a href="#" data-section="forms-content"><i class="fas fa-file-alt"></i> Forms</a></li>
                         <li><a href="#" data-section="contact-us-content"><i class="fas fa-envelope"></i> Contact Us</a></li>
-                        <li><a href="#" data-section="theme-settings-content"><i class="fas fa-palette"></i> Theme Settings</a></li>
+                        <li><a href="#" data-section="rules-content"><i class="fas fa-scroll"></i> Rules</a></li> <li><a href="#" data-section="theme-settings-content"><i class="fas fa-palette"></i> Theme Settings</a></li>
                         <li><button id="sidebar-logout-btn" style="background-color: var(--button-red); margin: 20px auto; width: calc(100% - 20px);" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</button></li>
                     </ul>
                 </nav>
@@ -1177,15 +1402,24 @@
             <div id="homepage-nav-section">
                 <h2 style="text-align: center; color: var(--accent-green);">Choose Your Path</h2>
                 <div id="main-nav-buttons">
-                    <button onclick="showSection('server-info-content')">💻 Server Details</button>
-                    <button onclick="showSection('plugins-content')">🧩 Plugins</button>
-                    <button onclick="showSection('how-to-play-content')">📚 How to Play & Start</button>
+                    <button onclick="showSection('server-info-content')">
+                        <span>🌍</span>
+                        <span class="button-text">Server Details</span>
+                    </button>
+                    <button onclick="showSection('plugins-content')">
+                        <span>⚙️</span>
+                        <span class="button-text">Plugins</span>
+                    </button>
+                    <button onclick="showSection('how-to-play-content')">
+                        <span>📚</span>
+                        <span class="button-text">How to Play & Start</span>
+                    </button>
                 </div>
             </div>
 
             <div id="dynamic-content-area">
                 <div id="server-info-content" class="content-section active">
-                    <h2>🌍 Server Info & Status</h2>
+                    <h2>🖥️ Server Info & Status</h2>
                     <p><strong>Java & Bedrock IP:</strong> <span id="java-ip">mc1524209.fmcs.cloud</span> <button onclick="copyToClipboard('java-ip')">📋 Copy</button></p>
                     <p><strong>Port:</strong> <span id="server-port">38762</span> <button onclick="copyToClipboard('server-port')">📋 Copy</button></p>
                     <p>
@@ -1201,10 +1435,8 @@
                     <p><strong>Status:</strong> <span id="server-status">Checking status...</span></p>
                     <p><strong>Players:</strong> <span id="player-count"></span></p>
 
-                    <div id="offline-start" style="display: none; text-align: center; margin-top: 20px;">
-                        <h3 style="color: var(--accent-red);">🛠 Server is Offline</h3>
-                        <a href="https://freemcserver.net/server/1524209" target="_blank"><button style="background-color: var(--button-red);"><i class="fas fa-play"></i> Start Server</button></a>
-                    </div>
+                    <div id="server-control-options" style="text-align: center; margin-top: 20px;">
+                        </div>
 
                     <h3 style="color: var(--accent-green); font-size: 1.8em; margin-top: 30px; text-align: center;">👥 Online Players</h3>
                     <ul id="online-players-list" class="player-list">
@@ -1232,7 +1464,7 @@
 
                     <h3 style="color: var(--accent-green); font-size: 1.5em; margin-top: 30px; margin-bottom: 20px;">How to Start Server if Offline Or Expired</h3>
                     <ol>
-                        <li>Click the <strong>"<span style="color:var(--accent-red);">Start Server</span>"</strong> button above (in Server Info section).</li>
+                        <li>Click the relevant button in the <strong>Live Server Status</strong> section above.</li>
                         <li>It will open FreeMcServer's public page.</li>
                         <li>Scroll down the page.</li>
                         <li>If it shows <strong>Stop and Expires in X mins</strong>, the server is already starting or online.</li>
@@ -1284,6 +1516,24 @@
                         </form>
                     </div>
                 </div>
+
+                <div id="change-password-content" class="content-section">
+                    <h2>🔑 Change Password</h2>
+                    <form id="change-password-form">
+                        <label for="current-password">Current Password:</label>
+                        <input type="password" id="current-password" required>
+
+                        <label for="new-password">New Password:</label>
+                        <input type="password" id="new-password" required>
+
+                        <label for="confirm-new-password">Confirm New Password:</label>
+                        <input type="password" id="confirm-new-password" required>
+
+                        <button type="submit" style="background-color: var(--accent-blue);">Update Password</button>
+                        <p id="change-password-message" style="text-align: center; margin-top: 15px;"></p>
+                    </form>
+                </div>
+
 
                 <div id="players-content" class="content-section">
                     <h2>🏆 Players Leaderboard</h2>
@@ -1356,6 +1606,21 @@
                     <p id="contact-status"></p>
                 </div>
 
+                <div id="rules-content" class="content-section">
+                    <h2>📜 Server Rules</h2>
+                    <ul>
+                        <li><strong>Rule 1: Be Respectful.</strong> Treat all players with kindness and respect. Harassment, hate speech, and discrimination will not be tolerated.</li>
+                        <li><strong>Rule 2: No Griefing or Stealing.</strong> Do not destroy or modify other players' builds or steal their items.</li>
+                        <li><strong>Rule 3: No Cheating or Exploiting.</strong> Do not use any hacks, clients, or exploits that give you an unfair advantage.</li>
+                        <li><strong>Rule 4: Keep Chat Appropriate.</strong> Avoid excessive profanity, spamming, and inappropriate content in chat.</li>
+                        <li><strong>Rule 5: Land Claim.</strong> Protect your builds by claiming land. Unclaimed builds are subject to removal.</li>
+                        <li><strong>Rule 6: PvP Consent.</strong> PvP is only allowed with mutual consent from all parties involved.</li>
+                        <li><strong>Rule 7: Report Issues.</strong> If you encounter a bug, a rule-breaker, or need help, report it to staff.</li>
+                        <li><strong>Rule 8: Follow Staff Instructions.</strong> Respect decisions made by server staff.</li>
+                    </ul>
+                    <p style="text-align: center; margin-top: 20px; color: #999;">Failure to follow these rules may result in warnings, temporary bans, or permanent bans.</p>
+                </div>
+
                 <div id="theme-settings-content" class="content-section">
                     <h2>🎨 Theme Settings</h2>
                     <div id="themePanel">
@@ -1386,11 +1651,33 @@
         </main>
 
         <footer>
-            <p>&copy; 2025 Minecraft Server Hub. Hosted via <a href="https://freemcserver.net" target="_blank">FreeMcServer.net</a></p>
+            <p>© 2025 Minecraft Server Hub. Hosted via <a href="https://freemcserver.net" target="_blank">FreeMcServer.net</a></p>
         </footer>
     </div>
 
     <script>
+        // --- Custom Message Box (Replaces alert()) ---
+        const messageBoxOverlay = document.getElementById('message-box-overlay');
+        const messageBoxTitle = document.getElementById('message-box-title');
+        const messageBoxContent = document.getElementById('message-box-content');
+        const messageBoxCloseBtn = document.getElementById('message-box-close-btn');
+
+        function showCustomAlert(title, message) {
+            messageBoxTitle.textContent = title;
+            messageBoxContent.textContent = message;
+            messageBoxOverlay.classList.add('active');
+        }
+
+        messageBoxCloseBtn.addEventListener('click', () => {
+            messageBoxOverlay.classList.remove('active');
+        });
+
+        // Intercept standard alert calls to use custom box (for development/testing)
+        const originalAlert = window.alert;
+        window.alert = function(message) {
+            showCustomAlert('Alert', message);
+        };
+
         // --- Loading Screen Logic ---
         document.addEventListener('DOMContentLoaded', () => {
             const loadingScreen = document.getElementById('loading-screen');
@@ -1500,6 +1787,25 @@
                         resolve({ success: true, user: user.profile });
                     }, 500);
                 });
+            },
+            async changePassword(email, currentPassword, newPassword) {
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        const userJson = getSimulatedKVItem(email.toLowerCase());
+                        if (!userJson) {
+                            resolve({ success: false, message: 'User not found.' });
+                            return;
+                        }
+                        const user = JSON.parse(userJson);
+                        if (user.password !== currentPassword) { // Direct comparison for simulation
+                            resolve({ success: false, message: 'Incorrect current password.' });
+                            return;
+                        }
+                        user.password = newPassword; // Update password (still plaintext)
+                        putSimulatedKV(email.toLowerCase(), JSON.stringify(user));
+                        resolve({ success: true, message: 'Password updated successfully!' });
+                    }, 500);
+                });
             }
         };
 
@@ -1507,13 +1813,17 @@
         // --- User Authentication and Profile Management ---
         const AUTH_SCREEN = document.getElementById('auth-screen');
         const MAIN_AUTH_FORM = document.getElementById('auth-form-main');
-        const MAIN_LOGIN_BTN = document.getElementById('main-login-btn');
-        const MAIN_CREATE_ACCOUNT_BTN = document.getElementById('main-create-account-btn');
+        const MAIN_AUTH_SUBMIT_BTN = document.getElementById('main-auth-submit-btn'); // Unified submit button
+        const TOGGLE_AUTH_MODE_BTN = document.getElementById('toggle-auth-mode-btn'); // Toggle between login/create
         const MAIN_AUTH_EMAIL_INPUT = document.getElementById('auth-email-input');
         const MAIN_AUTH_PASSWORD_INPUT = document.getElementById('auth-password-input');
         const AUTH_MINECRAFT_USERNAME_INPUT = document.getElementById('auth-minecraft-username-input');
         const AUTH_ACCOUNT_NAME_INPUT = document.getElementById('auth-account-name-input');
+        const RULES_CHECKBOX_CONTAINER = document.getElementById('rules-checkbox-container');
+        const AGREE_RULES_CHECKBOX = document.getElementById('agree-rules-checkbox');
         const MAIN_AUTH_MESSAGE_ELEM = document.getElementById('auth-message-main');
+        const AUTH_WELCOME_MESSAGE = document.getElementById('auth-welcome-message');
+
 
         const PROFILE_FORM = document.getElementById('profile-form');
         const DISPLAY_EMAIL = document.getElementById('display-email');
@@ -1534,82 +1844,80 @@
         const PROFILE_INITIAL_ELEM = document.getElementById('profile-initial');
         const SIDEBAR_LOGOUT_BTN = document.getElementById('sidebar-logout-btn');
 
+        const HEADER_PROFILE_DISPLAY = document.getElementById('header-profile-display');
+        const HEADER_PROFILE_AVATAR = document.getElementById('header-profile-avatar');
+        const HEADER_PROFILE_INITIAL = document.getElementById('header-profile-initial');
+        const HEADER_PROFILE_IMAGE = document.getElementById('header-profile-image');
+        const PROFILE_DROPDOWN_MENU = document.getElementById('profile-dropdown-menu');
+
+        const CHANGE_PASSWORD_FORM = document.getElementById('change-password-form');
+        const CURRENT_PASSWORD_INPUT = document.getElementById('current-password');
+        const NEW_PASSWORD_INPUT = document.getElementById('new-password');
+        const CONFIRM_NEW_PASSWORD_INPUT = document.getElementById('confirm-new-password');
+        const CHANGE_PASSWORD_MESSAGE = document.getElementById('change-password-message');
+
+
         let currentUser = null; // Stores email, uid
         let userProfile = null; // Stores detailed profile data
-
-        // Initial setup of the test user in the simulated KV store
-        function initializeTestUserInSimulatedKV() {
-            const testEmail = "test@example.com";
-            const testPassword = "26";
-            const testAccName = "An";
-            const testMinecraftUsername = "TestMiner26";
-
-            if (!getSimulatedKVItem(testEmail)) {
-                const uid = generateUID(testEmail);
-                const newUser = {
-                    email: testEmail,
-                    password: testPassword,
-                    uid: uid,
-                    profile: {
-                        minecraftUsername: testMinecraftUsername,
-                        discordUsername: 'TestDiscord#1234',
-                        instagramUsername: '@testgram',
-                        accountId: uid,
-                        accountName: testAccName,
-                        avatar: ''
-                    }
-                };
-                putSimulatedKV(testEmail, JSON.stringify(newUser));
-                console.log("Test user 'test@example.com' with password '26' initialized in simulated Cloudflare KV.");
-            }
-        }
-        initializeTestUserInSimulatedKV();
-
 
         // Simple UID generator (for demo purposes)
         function generateUID(email) {
             return 'user_' + btoa(email).replace(/=/g, '').substring(0, 10) + '_' + Date.now().toString().slice(-4);
         }
 
-        // --- Login Handler ---
-        MAIN_LOGIN_BTN.addEventListener('click', async (e) => {
+        // --- Auth Mode Toggle (Login / Create Account) ---
+        let isCreateMode = false; // Initial state: Login
+
+        function setAuthMode(mode) {
+            isCreateMode = mode;
+            MAIN_AUTH_MESSAGE_ELEM.textContent = ''; // Clear messages
+
+            if (isCreateMode) {
+                AUTH_WELCOME_MESSAGE.textContent = '✨ Create Your Miner Account!';
+                AUTH_MINECRAFT_USERNAME_INPUT.style.display = 'block';
+                AUTH_ACCOUNT_NAME_INPUT.style.display = 'block';
+                RULES_CHECKBOX_CONTAINER.style.display = 'flex'; // Show rules checkbox
+                MAIN_AUTH_SUBMIT_BTN.textContent = 'Register Account';
+                TOGGLE_AUTH_MODE_BTN.textContent = 'Back to Login';
+            } else {
+                AUTH_WELCOME_MESSAGE.textContent = '✨ Join the Adventure, Miner!';
+                AUTH_MINECRAFT_USERNAME_INPUT.style.display = 'none';
+                AUTH_ACCOUNT_NAME_INPUT.style.display = 'none';
+                RULES_CHECKBOX_CONTAINER.style.display = 'none'; // Hide rules checkbox
+                MAIN_AUTH_SUBMIT_BTN.textContent = 'Login';
+                TOGGLE_AUTH_MODE_BTN.textContent = 'Create Account';
+            }
+            // Clear inputs when switching modes
+            MAIN_AUTH_EMAIL_INPUT.value = '';
+            MAIN_AUTH_PASSWORD_INPUT.value = '';
+            AUTH_MINECRAFT_USERNAME_INPUT.value = '';
+            AUTH_ACCOUNT_NAME_INPUT.value = '';
+            AGREE_RULES_CHECKBOX.checked = false;
+        }
+
+        TOGGLE_AUTH_MODE_BTN.addEventListener('click', (e) => {
+            e.preventDefault();
+            setAuthMode(!isCreateMode);
+        });
+
+        MAIN_AUTH_SUBMIT_BTN.addEventListener('click', async (e) => {
             e.preventDefault();
             MAIN_AUTH_MESSAGE_ELEM.textContent = '';
+
             const email = MAIN_AUTH_EMAIL_INPUT.value;
             const password = MAIN_AUTH_PASSWORD_INPUT.value;
 
-            const response = await simulatedCloudflareApi.login(email, password);
-
-            if (response.success) {
-                currentUser = { email: response.email, uid: response.uid };
-                userProfile = response.user;
-                sessionStorage.setItem('current_auth_email', email); // Keep session active
-                handleSuccessfulAuth();
-                showCustomMessage(MAIN_AUTH_MESSAGE_ELEM, 'Login successful!', 'success');
-            } else {
-                showCustomMessage(MAIN_AUTH_MESSAGE_ELEM, response.message, 'error');
-            }
-        });
-
-        // --- Create Account Handler ---
-        MAIN_CREATE_ACCOUNT_BTN.addEventListener('click', async (e) => {
-            e.preventDefault();
-
-            if (MAIN_CREATE_ACCOUNT_BTN.textContent === 'Create Account') {
-                AUTH_MINECRAFT_USERNAME_INPUT.style.display = 'block';
-                AUTH_ACCOUNT_NAME_INPUT.style.display = 'block';
-                MAIN_LOGIN_BTN.style.display = 'none';
-                MAIN_CREATE_ACCOUNT_BTN.textContent = 'Register Account';
-                MAIN_AUTH_MESSAGE_ELEM.textContent = '';
-            } else {
-                MAIN_AUTH_MESSAGE_ELEM.textContent = '';
-                const email = MAIN_AUTH_EMAIL_INPUT.value;
-                const password = MAIN_AUTH_PASSWORD_INPUT.value;
+            if (isCreateMode) {
+                // Register logic
                 const minecraftUsername = AUTH_MINECRAFT_USERNAME_INPUT.value.trim();
                 const accountName = AUTH_ACCOUNT_NAME_INPUT.value.trim();
 
                 if (!email || !password || !minecraftUsername || !accountName) {
-                    showCustomMessage(MAIN_AUTH_MESSAGE_ELEM, 'Please fill all required fields.', 'error');
+                    showCustomMessage(MAIN_AUTH_MESSAGE_ELEM, 'Please fill all fields for registration.', 'error');
+                    return;
+                }
+                if (!AGREE_RULES_CHECKBOX.checked) {
+                    showCustomMessage(MAIN_AUTH_MESSAGE_ELEM, 'You must agree to the Minecraft Server Rules to create an account.', 'error');
                     return;
                 }
 
@@ -1620,7 +1928,21 @@
                     userProfile = response.user;
                     sessionStorage.setItem('current_auth_email', email);
                     handleSuccessfulAuth();
-                    showCustomMessage(MAIN_AUTH_MESSAGE_ELEM, 'Account created successfully! Please update your profile.', 'success');
+                    showCustomMessage(MAIN_AUTH_MESSAGE_ELEM, 'Account created successfully!', 'success');
+                } else {
+                    showCustomMessage(MAIN_AUTH_MESSAGE_ELEM, response.message, 'error');
+                }
+
+            } else {
+                // Login logic
+                const response = await simulatedCloudflareApi.login(email, password);
+
+                if (response.success) {
+                    currentUser = { email: response.email, uid: response.uid };
+                    userProfile = response.user;
+                    sessionStorage.setItem('current_auth_email', email);
+                    handleSuccessfulAuth();
+                    showCustomMessage(MAIN_AUTH_MESSAGE_ELEM, 'Login successful!', 'success');
                 } else {
                     showCustomMessage(MAIN_AUTH_MESSAGE_ELEM, response.message, 'error');
                 }
@@ -1633,16 +1955,16 @@
             AUTH_SCREEN.style.display = 'none';
             document.getElementById('main-content-wrapper').style.display = 'block';
             console.log('Auth successful: showing main content.');
-            renderProfile(); // Populate profile fields
+            renderProfile(); // Populate profile fields and header profile
             renderPlugins([...pluginsData].sort((a,b) => a.name.localeCompare(b.name))); // Initial render of sorted plugins
             showSection('server-info-content'); // Default to SERVER DETAILS on home
             fetchServerStatus(); // Fetch server status immediately
         }
 
-        // Render profile details in Account Settings
+        // Render profile details in Account Settings and header
         function renderProfile() {
             if (currentUser && userProfile) {
-                // Display fields
+                // Display fields in Account Settings
                 DISPLAY_EMAIL.textContent = currentUser.email;
                 DISPLAY_MINECRAFT_USERNAME.textContent = userProfile.minecraftUsername || 'N/A';
                 DISPLAY_DISCORD_USERNAME.textContent = userProfile.discordUsername || 'N/A';
@@ -1650,26 +1972,43 @@
                 DISPLAY_ACCOUNT_ID.textContent = currentUser.uid || 'N/A';
                 DISPLAY_ACCOUNT_NAME.textContent = userProfile.accountName || 'N/A';
 
-                // Input fields (for editing)
+                // Input fields (for editing) in Account Settings
                 MINECRAFT_USERNAME_INPUT.value = userProfile.minecraftUsername || '';
                 DISCORD_USERNAME_INPUT.value = userProfile.discordUsername || '';
                 INSTAGRAM_USERNAME_INPUT.value = userProfile.instagramUsername || '';
                 ACCOUNT_NAME_INPUT.value = userProfile.accountName || '';
 
+                // Render header profile picture
                 updateAvatarDisplay(userProfile.avatar, currentUser.email);
             }
         }
 
-        // Update avatar display (image or initial)
+        // Update avatar display (large for profile section, small for header)
         function updateAvatarDisplay(avatarDataUrl, email) {
+            // Main profile avatar
+            const mainProfileImage = document.getElementById('profile-image');
+            const mainProfileInitial = document.getElementById('profile-initial');
             if (avatarDataUrl) {
-                PROFILE_IMAGE_ELEM.src = avatarDataUrl;
-                PROFILE_IMAGE_ELEM.style.display = 'block';
-                PROFILE_INITIAL_ELEM.style.display = 'none';
+                mainProfileImage.src = avatarDataUrl;
+                mainProfileImage.style.display = 'block';
+                mainProfileInitial.style.display = 'none';
             } else {
-                PROFILE_IMAGE_ELEM.style.display = 'none';
-                PROFILE_INITIAL_ELEM.style.display = 'flex'; // Ensure flex for centering
-                PROFILE_INITIAL_ELEM.textContent = email ? email.charAt(0).toUpperCase() : '?';
+                mainProfileImage.style.display = 'none';
+                mainProfileInitial.style.display = 'flex';
+                mainProfileInitial.textContent = email ? email.charAt(0).toUpperCase() : '?';
+            }
+
+            // Header profile avatar
+            if (HEADER_PROFILE_IMAGE && HEADER_PROFILE_INITIAL) {
+                if (avatarDataUrl) {
+                    HEADER_PROFILE_IMAGE.src = avatarDataUrl;
+                    HEADER_PROFILE_IMAGE.style.display = 'block';
+                    HEADER_PROFILE_INITIAL.style.display = 'none';
+                } else {
+                    HEADER_PROFILE_IMAGE.style.display = 'none';
+                    HEADER_PROFILE_INITIAL.style.display = 'flex';
+                    HEADER_PROFILE_INITIAL.textContent = email ? email.charAt(0).toUpperCase() : '?';
+                }
             }
         }
 
@@ -1693,7 +2032,7 @@
 
             if (response.success) {
                 userProfile = response.user; // Update local profile with confirmed changes
-                renderProfile(); // Re-render to update display fields
+                renderProfile(); // Re-render to update display fields and header
                 showCustomMessage(PROFILE_MESSAGE_ELEM, 'Profile saved successfully!', 'success');
             } else {
                 showCustomMessage(PROFILE_MESSAGE_ELEM, response.message, 'error');
@@ -1725,6 +2064,58 @@
             }
         });
 
+        // Toggle profile dropdown in header
+        if (HEADER_PROFILE_AVATAR) {
+            HEADER_PROFILE_AVATAR.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent click from closing immediately
+                PROFILE_DROPDOWN_MENU.classList.toggle('active');
+            });
+            // Close dropdown if clicked outside
+            document.addEventListener('click', (e) => {
+                if (!HEADER_PROFILE_DISPLAY.contains(e.target)) {
+                    PROFILE_DROPDOWN_MENU.classList.remove('active');
+                }
+            });
+        }
+        function toggleProfileDropdown() {
+             PROFILE_DROPDOWN_MENU.classList.toggle('active');
+        }
+
+        // Handle Change Password Form
+        CHANGE_PASSWORD_FORM.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            CHANGE_PASSWORD_MESSAGE.textContent = '';
+            const currentPassword = CURRENT_PASSWORD_INPUT.value;
+            const newPassword = NEW_PASSWORD_INPUT.value;
+            const confirmNewPassword = CONFIRM_NEW_PASSWORD_INPUT.value;
+
+            if (!currentPassword || !newPassword || !confirmNewPassword) {
+                showCustomMessage(CHANGE_PASSWORD_MESSAGE, 'All password fields are required.', 'error');
+                return;
+            }
+            if (newPassword !== confirmNewPassword) {
+                showCustomMessage(CHANGE_PASSWORD_MESSAGE, 'New password and confirmation do not match.', 'error');
+                return;
+            }
+            if (newPassword.length < 6) { // Example strength check
+                showCustomMessage(CHANGE_PASSWORD_MESSAGE, 'New password must be at least 6 characters long.', 'error');
+                return;
+            }
+
+            const response = await simulatedCloudflareApi.changePassword(currentUser.email, currentPassword, newPassword);
+
+            if (response.success) {
+                showCustomMessage(CHANGE_PASSWORD_MESSAGE, response.message, 'success');
+                // Clear fields on success
+                CURRENT_PASSWORD_INPUT.value = '';
+                NEW_PASSWORD_INPUT.value = '';
+                CONFIRM_NEW_PASSWORD_INPUT.value = '';
+            } else {
+                showCustomMessage(CHANGE_PASSWORD_MESSAGE, response.message, 'error');
+            }
+        });
+
+
         // Logout function
         function logoutUser() {
             currentUser = null;
@@ -1735,15 +2126,8 @@
             AUTH_SCREEN.style.display = 'flex'; // Show auth screen
             document.getElementById('main-content-wrapper').style.display = 'none'; // Hide main content
             showCustomMessage(MAIN_AUTH_MESSAGE_ELEM, 'You have been logged out.', 'success');
-            // Reset auth form fields and buttons
-            MAIN_AUTH_EMAIL_INPUT.value = '';
-            MAIN_AUTH_PASSWORD_INPUT.value = '';
-            AUTH_MINECRAFT_USERNAME_INPUT.value = '';
-            AUTH_ACCOUNT_NAME_INPUT.value = '';
-            AUTH_MINECRAFT_USERNAME_INPUT.style.display = 'none';
-            AUTH_ACCOUNT_NAME_INPUT.style.display = 'none';
-            MAIN_LOGIN_BTN.style.display = 'block'; // Show login button by default
-            MAIN_CREATE_ACCOUNT_BTN.textContent = 'Create Account'; // Reset button text
+            // Reset auth form fields and set to login mode
+            setAuthMode(false); // Reset to login mode
             toggleSidebar(); // Close sidebar if open
         }
         SIDEBAR_LOGOUT_BTN.addEventListener('click', logoutUser);
@@ -1805,70 +2189,99 @@
 
         // --- Server Status Script (Integrated with player names if available) ---
         const serverIP = "mc1524209.fmcs.cloud"; // Your FreeMcServer IP
-        async function fetchServerStatus() {
-            try {
-                const res = await fetch(`https://api.mcsrvstat.us/2/${serverIP}`);
-                const data = await res.json();
-                const statusSpan = document.getElementById("server-status");
-                const playersSpan = document.getElementById("player-count");
-                const offlineStartDiv = document.getElementById("offline-start");
-                const onlinePlayersList = document.getElementById("online-players-list");
+        const SERVER_CONTROL_OPTIONS = document.getElementById('server-control-options');
 
-                if (!data || typeof data.online === "undefined") {
-                    statusSpan.innerHTML = "⚠️ Error checking status.";
-                    statusSpan.classList.add("status-offline");
-                    playersSpan.innerHTML = "";
-                    offlineStartDiv.style.display = "block";
-                    onlinePlayersList.innerHTML = '<li>Error fetching player list.</li>';
-                    return;
-                }
+        // Simulated server state (for testing Expired/Online/Offline)
+        let simulatedServerState = {
+            online: false,
+            expired: false,
+            lastKnownOnlinePlayers: 0,
+            lastChecked: Date.now() // To simulate expiration over time if desired
+        };
 
-                if (!data.online) {
-                    statusSpan.innerHTML = "🔴 Offline";
-                    statusSpan.classList.remove("status-online");
-                    statusSpan.classList.add("status-offline");
-                    playersSpan.innerHTML = "";
-                    offlineStartDiv.style.display = "block";
-                    onlinePlayersList.innerHTML = '<li>Server is offline.</li>';
-                } else {
-                    statusSpan.innerHTML = "🟢 Online";
-                    statusSpan.classList.remove("status-offline");
-                    statusSpan.classList.add("status-online");
-                    playersSpan.innerHTML = `👥 ${data.players.online}/${data.players.max} Players`;
-                    offlineStartDiv.style.display = "none";
-
-                    if (data.players && data.players.list && data.players.list.length > 0) {
-                        onlinePlayersList.innerHTML = ''; // Clear previous list
-                        data.players.list.forEach(player => {
-                            const li = document.createElement('li');
-                            li.innerHTML = `<span>${player}</span>`; // Display player name
-                            onlinePlayersList.appendChild(li);
-                        });
-                    } else {
-                        onlinePlayersList.innerHTML = '<li>No players currently online.</li>';
-                    }
-                }
-            } catch (error) {
-                console.error("Failed to fetch server status:", error);
-                const statusSpan = document.getElementById("server-status");
-                const playersSpan = document.getElementById("player-count");
-                const offlineStartDiv = document.getElementById("offline-start");
-                const onlinePlayersList = document.getElementById("online-players-list");
-                statusSpan.innerHTML = "⚠️ Error checking status.";
-                statusSpan.classList.add("status-offline");
-                playersSpan.innerHTML = "";
-                offlineStartDiv.style.display = "block";
-                onlinePlayersList.innerHTML = '<li>Failed to load player list.</li>';
+        // Function to randomly change server state for testing
+        function updateSimulatedServerState() {
+            const now = Date.now();
+            // Simulate random changes
+            const random = Math.random();
+            if (random < 0.2) { // 20% chance to be expired
+                simulatedServerState.expired = true;
+                simulatedServerState.online = false;
+            } else if (random < 0.5) { // 30% chance to be offline (not expired)
+                simulatedServerState.expired = false;
+                simulatedServerState.online = false;
+            } else { // 50% chance to be online
+                simulatedServerState.expired = false;
+                simulatedServerState.online = true;
+                simulatedServerState.lastKnownOnlinePlayers = Math.floor(Math.random() * 20) + 1; // 1 to 20 players
             }
+            simulatedServerState.lastChecked = now;
+            console.log('Simulated Server State Updated:', simulatedServerState);
         }
+
+        // Update state every 30 seconds for dynamic testing (optional, can be removed)
+        // setInterval(updateSimulatedServerState, 30000); // Update every 30 seconds
+
+        async function fetchServerStatus() {
+            // In a real scenario, you'd fetch from mcsrvstat.us and potentially your own backend
+            // For now, use the simulated state.
+            updateSimulatedServerState(); // Update state before fetching for UI
+
+            const statusSpan = document.getElementById("server-status");
+            const playersSpan = document.getElementById("player-count");
+            const onlinePlayersList = document.getElementById("online-players-list");
+            SERVER_CONTROL_OPTIONS.innerHTML = ''; // Clear previous buttons
+
+            let statusMessage = "Checking status...";
+            let statusClass = "";
+            let playerCountMessage = "";
+            let playersListHtml = '';
+            let controlButton = '';
+
+            if (simulatedServerState.expired) {
+                statusMessage = "❌ Expired";
+                statusClass = "status-expired";
+                playerCountMessage = "";
+                playersListHtml = '<li>Server subscription has expired.</li>';
+                controlButton = `<a href="https://panel.freemcserver.net/server/1524209/renew-basic" target="_blank"><button style="background-color: var(--button-red);"><i class="fas fa-redo-alt"></i> Renew Server</button></a>`;
+            } else if (!simulatedServerState.online) {
+                statusMessage = "🔴 Offline";
+                statusClass = "status-offline";
+                playerCountMessage = "";
+                playersListHtml = '<li>Server is offline.</li>';
+                controlButton = `<a href="https://freemcserver.net/server/1524209" target="_blank"><button style="background-color: var(--button-primary);"><i class="fas fa-play"></i> Start Server</button></a>`;
+            } else {
+                statusMessage = "✅ Online";
+                statusClass = "status-online";
+                playerCountMessage = `👥 ${simulatedServerState.lastKnownOnlinePlayers}/20 Players`;
+                if (simulatedServerState.lastKnownOnlinePlayers > 0) {
+                    // Simulate player names for online state
+                    const onlinePlayers = Array.from({length: simulatedServerState.lastKnownOnlinePlayers}, (_, i) => `Player${Math.floor(Math.random() * 1000) + 1}`);
+                    playersListHtml = onlinePlayers.map(p => `<li><span>${p}</span></li>`).join('');
+                } else {
+                    playersListHtml = '<li>No players currently online.</li>';
+                }
+            }
+
+            statusSpan.textContent = statusMessage;
+            statusSpan.className = statusClass; // Apply dynamic class
+            playersSpan.textContent = playerCountMessage;
+            onlinePlayersList.innerHTML = playersListHtml;
+            SERVER_CONTROL_OPTIONS.innerHTML = controlButton;
+        }
+
+        // Fetch server status every 10 seconds after initial display
+        setInterval(fetchServerStatus, 10000);
+
 
         // --- Copy-to-Clipboard ---
         function copyToClipboard(id) {
             const text = document.getElementById(id).innerText;
             navigator.clipboard.writeText(text).then(() => {
-                alert("Copied: " + text);
+                showCustomAlert('Copied!', 'Text copied to clipboard: ' + text);
             }).catch(err => {
                 console.error('Failed to copy text: ', err);
+                showCustomAlert('Error', 'Failed to copy text.');
             });
         }
 
@@ -1950,7 +2363,7 @@
             document.querySelector(`[data-player-sub-section="${sectionId.replace('-content', '')}"]`).classList.add('active');
 
             if (sectionId === 'all-players-content') {
-                renderAllPlayers(allPlayersData);
+                renderAllPlayers(allPlayersData); // Render on activation
             }
         }
 
@@ -1972,11 +2385,6 @@
                 const targetSection = button.dataset.playerSubSection + '-content';
                 showPlayerSubSection(targetSection);
             });
-        });
-
-        // Initial display of the first sub-section
-        document.addEventListener('DOMContentLoaded', () => {
-            showPlayerSubSection('top-richest-content'); // Default active for Players section
         });
 
         // Player search functionality
@@ -2120,30 +2528,35 @@ ${message}`;
         }
 
 
-        // --- Custom Message Display ---
+        // --- Custom Message Display for small inline messages (not the full modal alert) ---
         function showCustomMessage(element, message, type) {
-            let msgDiv = element.closest('.content-section') || element.closest('#auth-panel') || document.body; // Find a suitable parent
-            let existingMsg = msgDiv.querySelector('.custom-message');
-            if (existingMsg) {
-                existingMsg.remove(); // Remove old message to prevent stacking
+            let msgElement = null;
+            // Check if element is a button, then find its parent's message area
+            if (element.tagName === 'BUTTON' || element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                msgElement = element.parentNode.querySelector('.custom-message') || element.closest('form').querySelector('.custom-message');
+                if (!msgElement) {
+                    msgElement = document.createElement('p'); // Use p for text messages
+                    msgElement.classList.add('custom-message');
+                    // Append after button or form
+                    if (element.tagName === 'BUTTON') {
+                        element.parentNode.appendChild(msgElement);
+                    } else {
+                        element.closest('form').appendChild(msgElement);
+                    }
+                }
+            } else {
+                // For existing message areas like #auth-message-main
+                msgElement = element;
             }
 
-            let newMsg = document.createElement('div');
-            newMsg.classList.add('custom-message');
-            newMsg.className = `custom-message ${type}`; // 'error' or 'success'
-            newMsg.textContent = message;
-            newMsg.style.cssText = `
-                text-align: center;
-                margin-top: 15px;
-                font-weight: bold;
-                font-size: 0.95em;
-                color: ${type === 'error' ? 'var(--accent-red)' : 'var(--accent-green)'};
-            `;
-            msgDiv.appendChild(newMsg);
-
-            setTimeout(() => {
-                newMsg.remove();
-            }, 3000); // Remove message after 3 seconds
+            if (msgElement) {
+                msgElement.textContent = message;
+                msgElement.className = `custom-message ${type}`; // 'error' or 'success'
+                setTimeout(() => {
+                    msgElement.textContent = '';
+                    msgElement.classList.remove('error', 'success');
+                }, 3000); // Clear message after 3 seconds
+            }
         }
 
         // --- Initial Load & Authentication Check ---
@@ -2157,9 +2570,6 @@ ${message}`;
             const storedAuthEmail = sessionStorage.getItem('current_auth_email');
             if (storedAuthEmail) {
                 console.log('Found stored email in session. Attempting re-login...');
-                // Attempt to log in with the stored email to retrieve full user data from simulated KV
-                // We don't have the password, so just check if the email exists in our simulated KV
-                // In a real app, you'd use a token or persistent login.
                 const userJson = getSimulatedKVItem(storedAuthEmail);
                 if (userJson) {
                     const user = JSON.parse(userJson);
@@ -2170,14 +2580,21 @@ ${message}`;
                 } else {
                     console.log('Stored email not found in simulated KV. Showing auth screen.');
                     sessionStorage.removeItem('current_auth_email'); // Clear invalid session
+                    setAuthMode(false); // Default to login mode
                     authScreen.style.display = "flex";
                     mainContentWrapper.style.display = "none";
                 }
             } else {
                 console.log('No stored email found. Showing auth screen.');
+                setAuthMode(false); // Default to login mode
                 authScreen.style.display = "flex";
                 mainContentWrapper.style.display = "none";
             }
+
+            // Initial render of plugins (alphabetical order) for the Plugins section
+            renderPlugins([...pluginsData].sort((a,b) => a.name.localeCompare(b.name)));
+            // Initial render for players section (default to richest)
+            showPlayerSubSection('top-richest-content');
         });
 
     </script>
