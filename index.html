@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Server Hub</title>
+    <title>Minecraft Server</title>
+    <!-- Google Fonts: Inter for modern typography -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Modern & Animated Theme Variables */
@@ -52,11 +54,28 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Custom 2D Loading Animation (Diamond) */
-        @keyframes loadingDiamond {
-            0% { transform: rotate(0deg) scale(0.8); border-radius: 10%; }
-            50% { transform: rotate(180deg) scale(1.1); border-radius: 30%; }
-            100% { transform: rotate(360deg) scale(0.8); border-radius: 10%; }
+        /* NEW Loading Animation: Pulsating Dots */
+        @keyframes pulsatingDot {
+            0%, 100% { transform: scale(0.8); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+        .loading-spinner {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .loading-spinner div {
+            width: 15px;
+            height: 15px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            animation: pulsatingDot 1.5s infinite ease-in-out;
+        }
+        .loading-spinner div:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .loading-spinner div:nth-child(3) {
+            animation-delay: 0.4s;
         }
 
         /* --- Base Body and HTML Styles --- */
@@ -116,7 +135,8 @@
         input[type="text"],
         input[type="password"],
         input[type="email"],
-        textarea {
+        textarea,
+        select { /* Added select for contact form */
             width: calc(100% - 24px); /* Account for padding */
             padding: 12px;
             margin-bottom: 15px;
@@ -131,7 +151,8 @@
         input[type="text"]:focus,
         input[type="password"]:focus,
         input[type="email"]:focus,
-        textarea:focus {
+        textarea:focus,
+        select:focus { /* Added select for contact form */
             border-color: var(--accent-green);
             outline: none;
             box-shadow: 0 0 0 3px rgba(0, 255, 204, 0.3);
@@ -147,6 +168,48 @@
             text-decoration: underline;
         }
 
+
+        /* --- Message Box Overlay (for custom alerts) --- */
+        #message-box-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        #message-box-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .message-box {
+            background: var(--box-color);
+            border: 2px solid var(--accent-green);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+            animation: fadeIn 0.3s ease-out;
+        }
+        .message-box h3 {
+            color: var(--accent-green);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+        .message-box p {
+            color: var(--text-light);
+            font-size: 1.1em;
+            margin-bottom: 0;
+        }
 
         /* --- Loading Screen (Initial & Post-Auth) --- */
         #loading-screen {
@@ -166,17 +229,6 @@
         #loading-screen.hidden {
             opacity: 0;
             pointer-events: none;
-        }
-        /* Custom 2D Diamond Loading Animation */
-        .loading-spinner {
-            width: 80px;
-            height: 80px;
-            background-color: var(--accent-green); /* Green diamond */
-            animation: loadingDiamond 2s ease-in-out infinite;
-            margin-bottom: 20px;
-            transform: rotate(45deg); /* Make it a diamond initially */
-            display: block;
-            border: 4px solid var(--accent-blue); /* Subtle blue border */
         }
         #loading-screen p {
             color: var(--text-light);
@@ -404,49 +456,44 @@
         }
 
         #main-nav-buttons button {
-            padding: 8px 15px; /* Adjust padding for smaller buttons */
-            font-size: 1.1em; /* Adjust font size */
-            height: 60px; /* Fixed height to accommodate emoji and text */
-            flex: 1 1 180px; /* Adjust basis for 3 columns on larger screens */
-            max-width: 32%; /* Max width for 3 columns */
+            /* Exact sizing to match Players sub-nav buttons */
+            padding: 10px 18px;
+            font-size: 0.95em;
+            min-width: 150px;
+            max-width: 200px;
+            height: auto; /* Let content determine height */
+            flex-grow: 1; /* Allow buttons to grow */
+            flex-basis: 180px; /* Roughly 3 per row on larger screens */
             display: flex;
-            flex-direction: column; /* Stack emoji and text */
+            flex-direction: column; /* Stack icon/emoji and text */
             align-items: center;
             justify-content: center;
-            gap: 5px; /* Space between emoji and text */
-            background-color: var(--accent-blue);
-            color: white;
+            gap: 5px; /* Space between icon/emoji and text */
+            background-color: #333; /* Default dark grey */
+            color: var(--text-light);
             box-shadow: 0 3px 8px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
             font-weight: 600;
         }
-        #main-nav-buttons button span {
+        #main-nav-buttons button i {
+            font-size: 1.8em; /* Icon size */
+            line-height: 1; /* Remove extra space above/below icon */
+        }
+        #main-nav-buttons button span.emoji { /* Added span.emoji for specific emoji styling */
             font-size: 1.8em; /* Emoji size */
             line-height: 1; /* Remove extra space above/below emoji */
         }
         #main-nav-buttons button span.button-text {
-            font-size: 0.8em; /* Smaller text below emoji */
+            font-size: 0.8em; /* Smaller text below icon/emoji */
             font-weight: 600;
             color: #eee;
         }
 
         #main-nav-buttons button:hover {
-            background-color: #5b9bd5; /* Lighter blue on hover */
+            background-color: var(--accent-green); /* Change color to accent-green on hover */
+            color: var(--text-dark); /* Dark text for light background */
             transform: translateY(-2px) scale(1.01);
             box-shadow: 0 5px 10px rgba(0,0,0,0.4);
-        }
-
-        #main-nav-buttons button:nth-child(2) { /* Plugins */
-            background-color: var(--accent-green);
-        }
-        #main-nav-buttons button:nth-child(2):hover {
-            background-color: #00ddbb;
-        }
-        #main-nav-buttons button:nth-child(3) { /* How to Play & Start */
-            background-color: var(--accent-dark-blue); /* Using darker blue */
-        }
-        #main-nav-buttons button:nth-child(3):hover {
-            background-color: #1565c0; /* Darker shade of dark blue */
         }
 
 
@@ -796,6 +843,11 @@
             overflow: hidden; /* Hide overflow for animations */
         }
 
+        #plugin-list li.non-working-plugin {
+            border: 2px solid var(--accent-red); /* Red border for non-working plugins */
+            box-shadow: 0 0 10px rgba(239, 83, 80, 0.5); /* Red glow for non-working plugins */
+        }
+
         #plugin-list li:hover {
             background: #3a3a3a; /* Even darker on hover */
             transform: translateY(-5px); /* Lift effect */
@@ -808,6 +860,9 @@
             border-bottom: 1px solid #555;
             padding-bottom: 8px;
         }
+        #plugin-list li.non-working-plugin h3 {
+            color: var(--accent-red); /* Red text for non-working plugin title */
+        }
 
         #plugin-list li p.description {
             color: #ccc;
@@ -815,6 +870,13 @@
             margin-bottom: 15px;
             line-height: 1.5;
         }
+        #plugin-list li p.problem-message {
+            color: var(--accent-red);
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
 
         #plugin-list li .plugin-links {
             display: flex;
@@ -857,8 +919,18 @@
             height: 100%;
             border: none;
         }
+        .plugin-video.placeholder {
+            background-color: #3a3a3a;
+            color: #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+            font-size: 0.9em;
+        }
 
-        /* How to Play & Start Server Section */
+
+        /* How to Play & Start Server Section (now also "Guides") */
         #how-to-play-content ol {
             list-style: none; /* Remove default numbering */
             padding-left: 0;
@@ -989,7 +1061,11 @@
         }
 
 
-        /* Contact Us Section */
+        /* Contact Us section (repurposed from Issue Report) */
+        #contact-us-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
         #contact-us-content form button {
             width: 100%;
             background-color: var(--accent-dark-blue); /* Contact button color */
@@ -997,13 +1073,13 @@
         #contact-us-content form button:hover {
             background-color: #1565c0; /* Darker shade of dark blue */
         }
-        #contact-us-content #contact-status {
+        #contact-us-status {
             text-align: center;
             margin-top: 20px;
             font-weight: bold;
             color: var(--accent-green);
         }
-        #contact-us-content #contact-status.error {
+        #contact-us-status.error {
             color: var(--accent-red);
         }
 
@@ -1043,6 +1119,30 @@
             margin-bottom: 20px;
         }
 
+        #theme-settings-content label { /* Styling for theme labels */
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            color: #ccc;
+            font-size: 0.95em;
+        }
+        #theme-settings-content input[type="color"] {
+            width: calc(100% - 24px); /* Match other inputs */
+            padding: 5px; /* Smaller padding for color input */
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: #2a2a2a;
+            height: 40px; /* Make color picker larger */
+            cursor: pointer;
+        }
+        #theme-settings-content input[type="range"] {
+            width: calc(100% - 24px); /* Match other inputs */
+            margin-top: 5px;
+        }
+        #theme-settings-content input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
 
         /* --- Footer --- */
         footer {
@@ -1070,305 +1170,80 @@
             color: #00ddbb;
         }
 
-        /* --- Media Queries for Responsiveness --- */
-        @media (max-width: 900px) {
-            header h1 {
-                font-size: 2.5em;
-            }
-            .navbar-toggle {
-                position: static;
-                margin-right: 15px;
-            }
-            header {
-                flex-direction: row; /* Keep elements in a row */
-                justify-content: flex-start; /* Align menu icon and title */
-                align-items: center; /* Center items vertically */
-            }
-            header h1 {
-                margin-bottom: 0; /* Remove margin from title */
-                text-align: left;
-            }
-            #homepage-nav-section {
-                margin-top: 15px; /* Space below header */
-                padding: 15px;
-            }
-            #main-nav-buttons {
-                flex-direction: column; /* Stack buttons vertically */
-                gap: 15px;
-                width: 80%; /* Narrower for mobile */
-                max-width: 400px;
-            }
-            #main-nav-buttons button {
-                max-width: 100%; /* Full width for stacked buttons */
-                font-size: 1.1em; /* Adjusted for smaller screens */
-                padding: 15px 20px;
-                height: auto; /* Allow height to adjust */
-            }
-            #main-nav-buttons button span {
-                font-size: 2em; /* Keep emoji large */
-            }
-            #main-nav-buttons button span.button-text {
-                font-size: 0.9em; /* Adjust text size */
-            }
-            #main-content-wrapper {
-                padding: 10px;
-            }
-            .content-section {
-                padding: 25px;
-            }
-            section h2 {
-                font-size: 2em;
-            }
-            #plugin-list {
-                grid-template-columns: 1fr; /* Stack plugins on smaller screens */
-            }
-            #auth-panel {
-                margin: 50px 20px;
-                padding: 30px;
-            }
-            .theme-btn { /* This will be hidden by JS, but if it were visible */
-                position: static;
-                margin: 20px auto 0 auto;
-                display: block;
-                float: none;
-            }
-            #themePanel { /* This now lives inside #theme-settings-content */
-                max-width: 100%;
-            }
-            #main-content-wrapper.sidebar-open {
-                transform: translateX(0); /* No transform for main content on small screens */
-            }
-            .profile-container {
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
-            }
-            .profile-info-display {
-                border-right: none;
-                border-bottom: 1px solid #444;
-                padding-bottom: 20px;
-                margin-bottom: 20px;
-                width: 100%; /* Take full width when stacked */
-                max-width: 100%;
-            }
-            #profile-form {
-                max-width: 100%;
-            }
-            #players-content .player-sub-nav {
-                flex-direction: column;
-                align-items: center;
-            }
-            #players-content .player-sub-nav button {
-                width: 100%;
-                max-width: 300px;
-            }
-            .header-profile {
-                position: static; /* Remove absolute positioning */
-                margin-top: 15px; /* Space below title */
-                width: 100%;
-                justify-content: flex-end; /* Align right */
-            }
-            .header-profile .profile-dropdown {
-                top: auto;
-                bottom: -10px; /* Position above on small screens */
-                right: 0;
-                transform: translateY(100%); /* Slide up from bottom */
-            }
-            .header-profile .profile-dropdown.active {
-                transform: translateY(0%);
-            }
+        /* Custom message for inline forms */
+        .custom-message {
+            margin-top: 10px;
+            font-size: 0.9em;
+            font-weight: bold;
         }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 0; /* Remove body padding on very small screens */
-            }
-            header {
-                border-radius: 0;
-                margin-bottom: 15px;
-                padding: 15px 10px;
-                flex-direction: column; /* Stack header elements */
-                align-items: flex-start; /* Align to left */
-            }
-            header h1 {
-                font-size: 2em;
-                margin-left: 0;
-                text-align: left;
-                width: 100%;
-            }
-            .navbar-toggle {
-                font-size: 1.5em;
-                padding: 3px 8px;
-                margin-right: 10px;
-                position: static; /* Remove absolute positioning */
-                margin-bottom: 10px;
-                align-self: flex-start; /* Align to start in column layout */
-            }
-            #homepage-nav-section {
-                margin-top: 10px;
-                gap: 10px;
-                padding: 10px;
-            }
-            #main-nav-buttons {
-                width: 100%;
-            }
-            #main-nav-buttons button {
-                font-size: 0.95em; /* Even smaller font size */
-                padding: 10px 12px;
-            }
-            .content-section {
-                padding: 15px;
-                border-radius: 0; /* No border-radius on sections for full width */
-            }
-            section h2 {
-                font-size: 1.6em;
-                margin-bottom: 15px;
-                padding-bottom: 10px;
-            }
-            input[type="text"],
-            input[type="password"],
-            input[type="email"],
-            textarea {
-                width: calc(100% - 20px); /* Adjust for smaller padding */
-                padding: 10px;
-                margin-bottom: 10px;
-            }
-            #server-info-content p {
-                flex-direction: column; /* Stack info on tiny screens */
-                align-items: flex-start;
-                gap: 5px;
-                padding: 10px;
-            }
-            #server-info-content p strong {
-                width: 100%;
-                text-align: left;
-            }
-            #server-info-content p span {
-                width: 100%;
-                text-align: left;
-            }
-            #auth-panel {
-                margin: 20px 10px;
-                padding: 20px;
-            }
-            #sidebar {
-                width: 100%; /* Full width sidebar on very small screens */
-            }
-            .theme-btn { /* This will be hidden by JS */
-                width: auto;
-                padding: 6px 12px;
-                font-size: 0.9em;
-                margin: 10px auto;
-            }
-            #themePanel { /* This now lives inside #theme-settings-content */
-                margin: 0;
-            }
-            .header-profile {
-                margin-top: 10px; /* Adjust margin for very small screens */
-            }
+        .custom-message.error {
+            color: var(--accent-red);
         }
-
-        /* Message Box for alerts (replaces alert()) */
-        .message-box-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10001; /* Above everything */
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .message-box-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-        .message-box {
-            background-color: var(--box-color);
-            border: 1px solid var(--accent-green);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            transform: translateY(-20px);
-            opacity: 0;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-        .message-box-overlay.active .message-box {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        .message-box h3 {
+        .custom-message.success {
             color: var(--accent-green);
-            margin-top: 0;
-            margin-bottom: 15px;
         }
-        .message-box p {
-            color: var(--text-light);
-            margin-bottom: 25px;
-        }
-        .message-box button {
-            background-color: var(--accent-blue);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .message-box button:hover {
-            background-color: #5b9bd5;
-        }
-
     </style>
 </head>
 <body>
+    <!-- Message Box Overlay (for custom alerts) -->
     <div id="message-box-overlay" class="message-box-overlay">
         <div class="message-box">
             <h3 id="message-box-title"></h3>
             <p id="message-box-content"></p>
-            <button id="message-box-close-btn">OK</button>
         </div>
     </div>
 
+    <!-- Loading Screen -->
     <div id="loading-screen">
-        <div class="loading-spinner"></div>
+        <div class="loading-spinner">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
         <p>Loading Minecraft Experience...</p>
     </div>
 
+    <!-- Authentication Screen (Initially visible, hides after login/create) -->
     <div id="auth-screen">
         <div id="auth-panel">
-            <h2 id="auth-welcome-message">✨ Join the Adventure, Miner!</h2>
+            <h2 id="auth-welcome-message">Welcome Back!</h2>
             <form id="auth-form-main">
-                <input type="email" id="auth-email-input" placeholder="Email" required>
+                <input type="text" id="auth-email-input" placeholder="Enter Username or Email" required>
                 <input type="password" id="auth-password-input" placeholder="Password" required>
+
+                <!-- New: Platform Select (moved above username) -->
+                <label for="auth-platform-select" style="display: none; text-align: left; margin-top: 5px;">Minecraft Edition:</label>
+                <select id="auth-platform-select" style="display: none;" required>
+                    <option value="">-- Select Edition --</option>
+                    <option value="java">Java Edition</option>
+                    <option value="bedrock">Bedrock Edition</option>
+                </select>
+
+                <!-- Minecraft Username input - will have dot for Bedrock -->
                 <input type="text" id="auth-minecraft-username-input" placeholder="Minecraft Username" style="display: none;">
-                <input type="text" id="auth-account-name-input" placeholder="Account Name" style="display: none;">
+                <input type="text" id="auth-account-name-input" placeholder="Account Name (e.g. Guild Name)" style="display: none;">
+                
                 <div class="checkbox-container" id="rules-checkbox-container" style="display: none;">
                     <input type="checkbox" id="agree-rules-checkbox">
-                    <label for="agree-rules-checkbox">I agree to the <a href="#" onclick="showSection('rules-content'); return false;">Minecraft Server Rules</a></label>
+                    <label for="agree-rules-checkbox">I agree to the <a href="https://minecraft2613.github.io/Minecarft-2613-Rules/" target="_blank">Minecraft Server Rules</a></label>
                 </div>
 
                 <button type="submit" id="main-auth-submit-btn" style="background-color: var(--accent-blue);">Login</button>
                 <p id="auth-message-main"></p>
 
                 <div style="margin-top: 15px; border-top: 1px dashed #333; padding-top: 15px;">
-                    <button type="button" id="toggle-auth-mode-btn" style="background-color: var(--accent-dark-blue);">Create Account</button>
+                    <button type="button" id="toggle-auth-mode-btn" style="background-color: var(--accent-dark-blue);">Don't have an account? Create one</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Main Content Wrapper (Hidden until authenticated) -->
     <div id="main-content-wrapper">
         <header>
             <button class="navbar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-            <h1>🔥 Minecraft Server Hub</h1>
+            <h1>🔥 Minecraft Server</h1>
+            <!-- Top-right profile display -->
             <div class="header-profile" id="header-profile-display">
                 <div class="profile-avatar-small" id="header-profile-avatar">
                     <span id="header-profile-initial"></span>
@@ -1382,6 +1257,7 @@
         </header>
 
         <main class="main-content-area">
+            <!-- Sidebar -->
             <aside id="sidebar">
                 <button class="close-btn" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
                 <nav>
@@ -1392,65 +1268,78 @@
                         <li><a href="#" data-section="players-content"><i class="fas fa-users"></i> Players</a></li>
                         <li><a href="#" data-section="forms-content"><i class="fas fa-file-alt"></i> Forms</a></li>
                         <li><a href="#" data-section="contact-us-content"><i class="fas fa-envelope"></i> Contact Us</a></li>
-                        <li><a href="#" data-section="rules-content"><i class="fas fa-scroll"></i> Rules</a></li> <li><a href="#" data-section="theme-settings-content"><i class="fas fa-palette"></i> Theme Settings</a></li>
+                        <li><a href="https://minecraft2613.github.io/Minecarft-2613-Rules/" target="_blank"><i class="fas fa-scroll"></i> Rules</a></li> <!-- External Rules Link -->
+                        <li><a href="#" data-section="theme-settings-content"><i class="fas fa-palette"></i> Theme Settings</a></li>
                         <li><button id="sidebar-logout-btn" style="background-color: var(--button-red); margin: 20px auto; width: calc(100% - 20px);" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</button></li>
                     </ul>
                 </nav>
             </aside>
             <div class="overlay" onclick="toggleSidebar()"></div>
 
+            <!-- This div contains the always-visible navigation buttons -->
             <div id="homepage-nav-section">
                 <h2 style="text-align: center; color: var(--accent-green);">Choose Your Path</h2>
                 <div id="main-nav-buttons">
                     <button onclick="showSection('server-info-content')">
-                        <span>🌍</span>
+                        <i class="fas fa-info-circle"></i> <!-- Old icon for Server Details -->
                         <span class="button-text">Server Details</span>
                     </button>
                     <button onclick="showSection('plugins-content')">
-                        <span>⚙️</span>
+                        <i class="fas fa-puzzle-piece"></i>
                         <span class="button-text">Plugins</span>
                     </button>
                     <button onclick="showSection('how-to-play-content')">
-                        <span>📚</span>
+                        <i class="fas fa-question-circle"></i>
                         <span class="button-text">How to Play & Start</span>
                     </button>
                 </div>
             </div>
 
+            <!-- This container holds all the dynamic content sections below the main nav buttons -->
             <div id="dynamic-content-area">
+                <!-- Server Info Content (Default active after login) -->
                 <div id="server-info-content" class="content-section active">
                     <h2>🖥️ Server Info & Status</h2>
-                    <p><strong>Java & Bedrock IP:</strong> <span id="java-ip">mc1524209.fmcs.cloud</span> <button onclick="copyToClipboard('java-ip')">📋 Copy</button></p>
-                    <p><strong>Port:</strong> <span id="server-port">38762</span> <button onclick="copyToClipboard('server-port')">📋 Copy</button></p>
+                    <p><strong><i class="fas fa-link"></i> Server IP:</strong> <span id="server-ip">mc1524209.fmcs.cloud</span> <button onclick="copyToClipboard('server-ip')">📋 Copy</button></p>
+                    <p><strong><i class="fas fa-ethernet"></i> Port:</strong> <span id="server-port">38762</span> <button onclick="copyToClipboard('server-port')">📋 Copy</button></p>
                     <p>
-                        <strong>Quick Join (Bedrock):</strong>
+                        <strong><i class="fas fa-mobile-alt"></i> Quick Join (Bedrock):</strong>
                         <a href="minecraft://?addExternalServer=MyServer|mc1524209.fmcs.cloud:47112">
-                            <button><i class="fas fa-mobile-alt"></i> Connect with Bedrock</button>
+                            <button><i class="fas fa-gamepad"></i> Connect with Bedrock</button>
                         </a>
                     </p>
-                    <p><strong>Version:</strong> Java 1.21.4-1.7(via backward) / Bedrock 1.21.70-1.211.81(via Geyser)</p>
-                    <p><strong>Public Page:</strong> <a href="https://freemcserver.net/server/1524209" target="_blank" class="plugin-link-btn" style="background-color: var(--button-red);"><i class="fas fa-external-link-alt"></i> View Server</a></p>
+                    <p><strong><i class="fab fa-java"></i> Java Version:</strong> <span>1.21.4-1.7(via backward & and via version)</span></p>
+                    <p><strong><i class="fas fa-cube"></i> Bedrock Version:</strong> <span>1.21.70-1.211.81(via Geyser)</span></p>
+                    <p><strong><i class="fas fa-globe"></i> Public Page:</strong> <a href="https://freemcserver.net/server/1524209" target="_blank" class="plugin-link-btn" style="background-color: var(--button-red);"><i class="fas fa-external-link-alt"></i> View Server</a></p>
 
                     <h3 style="color: var(--accent-green); font-size: 1.8em; margin-top: 30px; text-align: center;">📊 Live Server Status</h3>
                     <p><strong>Status:</strong> <span id="server-status">Checking status...</span></p>
                     <p><strong>Players:</strong> <span id="player-count"></span></p>
 
                     <div id="server-control-options" style="text-align: center; margin-top: 20px;">
-                        </div>
+                        <!-- Buttons appear here based on status -->
+                    </div>
 
                     <h3 style="color: var(--accent-green); font-size: 1.8em; margin-top: 30px; text-align: center;">👥 Online Players</h3>
                     <ul id="online-players-list" class="player-list">
-                        <li>No players online.</li>
+                        <li>Loading player list...</li>
                     </ul>
                 </div>
 
+                <!-- Plugins Content (Initially hidden, shown by button click) -->
                 <div id="plugins-content" class="content-section">
                     <h2>🔌 Plugins</h2>
+                    <div class="player-sub-nav">
+                        <button data-plugin-sub-section="all-plugins" class="active">📦 All Plugins</button>
+                        <button data-plugin-sub-section="non-working-plugins">⚠️ Non-Working Plugins</button>
+                    </div>
                     <input type="text" id="plugin-search" placeholder="Search plugins..." class="glowTarget">
                     <ul id="plugin-list">
-                        </ul>
+                        <!-- Plugins will be dynamically loaded by JavaScript -->
+                    </ul>
                 </div>
 
+                <!-- How to Play & Start Server Content (Initially hidden, shown by button click) -->
                 <div id="how-to-play-content" class="content-section">
                     <h2>🎮 How to Join & Start The Server</h2>
                     <h3 style="color: var(--accent-green); font-size: 1.5em; margin-bottom: 20px;">How to Join</h3>
@@ -1458,23 +1347,23 @@
                         <li>Open Minecraft (Bedrock users click on the <strong style="color:var(--accent-green);">Connect with Bedrock</strong> button above).</li>
                         <li>Click on <strong>Multiplayer</strong> → <strong>Add Server</strong>.</li>
                         <li>Enter the Server IP: <strong style="color:var(--accent-green);">mc1524209.fmcs.cloud</strong></li>
-                        <li>Use Port: <strong style="color:var(--accent-green);">38762</strong> (Java & Bedrock)</li>
+                        <li>Use Port: <strong style="color:var(--accent-green);">38762</strong></li>
                         <li>Click <strong>Join Server</strong> and enjoy!</li>
                     </ol>
 
-                    <h3 style="color: var(--accent-green); font-size: 1.5em; margin-top: 30px; margin-bottom: 20px;">How to Start Server if Offline Or Expired</h3>
+                    <h3 style="color: var(--accent-green); font-size: 1.5em; margin-top: 30px; margin-bottom: 20px;">How to Start Server if Offline</h3>
                     <ol>
                         <li>Click the relevant button in the <strong>Live Server Status</strong> section above.</li>
                         <li>It will open FreeMcServer's public page.</li>
                         <li>Scroll down the page.</li>
                         <li>If it shows <strong>Stop and Expires in X mins</strong>, the server is already starting or online.</li>
                         <li>If it shows <strong>Start</strong>, click it.</li>
-                        <li>If it shows <strong>Expire</strong>, click <a href="https://panel.freemcserver.net/server/1524209/renew-basic" target="_blank">Renew Button</a> and follow step 5.</li>
                         <li>Wait around 5 minutes.</li>
                         <li>Then follow the steps in <strong>How to Play</strong>.</li>
                     </ol>
                 </div>
 
+                <!-- Account Settings Content (Sidebar only access) -->
                 <div id="account-settings-content" class="content-section">
                     <h2>👤 Account Settings</h2>
                     <div class="profile-container">
@@ -1482,7 +1371,7 @@
                             <h3 style="color: var(--accent-green); text-align: center; margin-bottom: 20px;">Your Profile</h3>
                             <div class="profile-avatar">
                                 <span id="profile-initial"></span>
-                                <img id="profile-image" src="" alt="Profile Picture" style="display: none;">
+                                <img id="profile-image" src="" alt="Profile Pic" style="display: none;">
                                 <input type="file" id="avatar-upload" accept="image/*">
                             </div>
                             <p style="text-align: center; color: #aaa; font-size: 0.9em; margin-top: 5px; margin-bottom: 20px;">Click avatar to change</p>
@@ -1490,23 +1379,19 @@
                             <div class="profile-info-text">
                                 <strong>Email:</strong> <span id="display-email"></span>
                                 <strong>Minecraft Username:</strong> <span id="display-minecraft-username"></span>
-                                <strong>Discord Username:</strong> <span id="display-discord-username"></span>
-                                <strong>Instagram Username:</strong> <span id="display-instagram-username"></span>
+                                <strong>Minecraft Edition:</strong> <span id="display-minecraft-edition"></span> <!-- New display for edition -->
                                 <strong>Account ID:</strong> <span id="display-account-id"></span>
                                 <strong>Account Name:</strong> <span id="display-account-name"></span>
                             </div>
+                            <button onclick="showSection('change-password-content')" style="background-color: var(--accent-blue); margin-top: 15px;">
+                                <i class="fas fa-key"></i> Change Password
+                            </button>
                         </div>
 
                         <form id="profile-form">
                             <h3 style="color: var(--accent-green); text-align: center; margin-bottom: 20px;">Update Info</h3>
                             <label for="minecraft-username">Minecraft Username:</label>
                             <input type="text" id="minecraft-username" placeholder="Your Minecraft Username">
-
-                            <label for="discord-username">Discord Username:</label>
-                            <input type="text" id="discord-username" placeholder="Your Discord#ID (e.g. user#1234)">
-
-                            <label for="instagram-username">Instagram Username:</label>
-                            <input type="text" id="instagram-username" placeholder="Your Instagram @handle">
 
                             <label for="account-name">Account Name:</label>
                             <input type="text" id="account-name" placeholder="e.g. Your Guild Name">
@@ -1517,6 +1402,7 @@
                     </div>
                 </div>
 
+                <!-- New: Change Password Section (Accessed from top-right dropdown) -->
                 <div id="change-password-content" class="content-section">
                     <h2>🔑 Change Password</h2>
                     <form id="change-password-form">
@@ -1535,6 +1421,7 @@
                 </div>
 
 
+                <!-- NEW: Players Content (Sidebar only access) -->
                 <div id="players-content" class="content-section">
                     <h2>🏆 Players Leaderboard</h2>
                     <div class="player-sub-nav">
@@ -1547,9 +1434,7 @@
                     <div id="top-richest-content" class="player-sub-content active">
                         <h3 style="color: var(--accent-green); text-align: center; margin-bottom: 20px;">👑 Top 3 Richest Players</h3>
                         <ul id="richest-players-list">
-                            <li><strong>1. Notch:</strong> <span>$1,000,000,000</span></li>
-                            <li><strong>2. Jeb_:</strong> <span>$500,000,000</span></li>
-                            <li><strong>3. Dinnerbone:</strong> <span>$250,000,000</span></li>
+                            <!-- Data populated by JS -->
                         </ul>
                     </div>
 
@@ -1557,21 +1442,14 @@
                         <h3 style="color: var(--accent-green); text-align: center; margin-bottom: 20px;">All Active Players</h3>
                         <input type="text" id="all-players-search" placeholder="Search players...">
                         <ul id="all-players-list">
-                            <li><strong>Player1:</strong> <span>Level 50</span></li>
-                            <li><strong>Player2:</strong> <span>Level 45</span></li>
-                            <li><strong>Player3:</strong> <span>Level 60</span></li>
-                            <li><strong>TestMiner26:</strong> <span>Level 15</span></li>
-                            <li><strong>AdventurerX:</strong> <span>Level 30</span></li>
-                            <li><strong>CraftMaster:</strong> <span>Level 22</span></li>
+                            <!-- Players will be rendered here with Java/Bedrock indication -->
                         </ul>
                     </div>
 
                     <div id="top-taxed-content" class="player-sub-content">
                         <h3 style="color: var(--accent-green); text-align: center; margin-bottom: 20px;">📉 Top 3 Most Taxed Players</h3>
                         <ul id="taxed-players-list">
-                            <li><strong>1. Notch:</strong> <span>$10,000,000 (Last Year)</span></li>
-                            <li><strong>2. PlayerX:</strong> <span>$8,000,000 (Last Year)</span></li>
-                            <li><strong>3. GuildLeader:</strong> <span>$7,500,000 (Last Year)</span></li>
+                            <!-- Data populated by JS -->
                         </ul>
                     </div>
 
@@ -1585,6 +1463,7 @@
                 </div>
 
 
+                <!-- Forms Content (Sidebar only access) -->
                 <div id="forms-content" class="content-section">
                     <h2>📋 Forms</h2>
                     <div style="text-align: center;">
@@ -1593,19 +1472,25 @@
                     </div>
                 </div>
 
+                <!-- Contact Us section (formerly Issue Report) -->
                 <div id="contact-us-content" class="content-section">
                     <h2>📬 Contact Us</h2>
-                    <p style="text-align: center; color: #ccc; margin-bottom: 20px;">If you have questions, feedback, or issues, let us know below:</p>
-                    <form id="contact-form">
-                        <input type="text" id="contact-name" placeholder="Your Name (Optional)"><br>
-                        <input type="text" id="contact-discord" placeholder="Your Discord ID (e.g. user#1234)" required><br>
-                        <input type="text" id="contact-minecraft" placeholder="Your Minecraft Username" required><br>
-                        <textarea id="contact-message" placeholder="Your message..." rows="5" required></textarea><br>
+                    <p style="text-align: center; color: #ccc; margin-bottom: 20px;">Have questions, feedback, or an issue? Let us know below. We'll get back to you via Discord!</p>
+                    <form id="contact-us-form">
+                        <label for="contact-minecraft-username">Your Minecraft Username:</label>
+                        <input type="text" id="contact-minecraft-username" placeholder="Your Minecraft Username" required><br>
+
+                        <label for="contact-discord-id">Your Discord ID (e.g., user#1234):</label>
+                        <input type="text" id="contact-discord-id" placeholder="Your Discord#ID" required><br>
+
+                        <label for="contact-message">Your message:</label>
+                        <textarea id="contact-message" placeholder="Please describe your message or issue..." rows="5" required></textarea><br>
                         <button type="submit" style="background-color: var(--accent-dark-blue);"><i class="fas fa-paper-plane"></i> Send Message</button>
                     </form>
-                    <p id="contact-status"></p>
+                    <p id="contact-us-status" class="custom-message"></p>
                 </div>
 
+                <!-- Rules Section -->
                 <div id="rules-content" class="content-section">
                     <h2>📜 Server Rules</h2>
                     <ul>
@@ -1618,30 +1503,40 @@
                         <li><strong>Rule 7: Report Issues.</strong> If you encounter a bug, a rule-breaker, or need help, report it to staff.</li>
                         <li><strong>Rule 8: Follow Staff Instructions.</strong> Respect decisions made by server staff.</li>
                     </ul>
-                    <p style="text-align: center; margin-top: 20px; color: #999;">Failure to follow these rules may result in warnings, temporary bans, or permanent bans.</p>
+                    <p style="text-align: center; margin-top: 20px; color: #999;">For a detailed list of rules, please visit our <a href="https://minecraft2613.github.io/Minecarft-2613-Rules/" target="_blank">full rules page</a>.</p>
                 </div>
 
+                <!-- Theme Settings Content (Sidebar only access) -->
                 <div id="theme-settings-content" class="content-section">
                     <h2>🎨 Theme Settings</h2>
                     <div id="themePanel">
-                        <label>Box Background Color</label>
+                        <label for="boxColor">Box Background Color</label>
                         <input type="color" id="boxColor">
 
-                        <label>Glow Color</label>
+                        <label for="glowColor">Glow Color</label>
                         <input type="color" id="glowColor">
 
                         <label><input type="checkbox" id="glowToggle"> Enable Glow</label>
 
-                        <label>Glow Speed (seconds)</label>
+                        <label for="glowSpeed">Glow Speed (seconds)</label>
                         <input type="range" id="glowSpeed" min="1" max="10" value="3">
 
-                        <label>Glow Brightness</label>
+                        <label for="glowBrightness">Glow Brightness</label>
                         <input type="range" id="glowBrightness" min="0" max="1" step="0.1" value="0.6">
 
-                        <label>Background Theme (CSS gradient or image URL)</label>
+                        <label for="bgTheme">Background Theme (CSS gradient or image URL)</label>
                         <input type="text" id="bgTheme" placeholder="e.g. linear-gradient(...) or url(...)">
 
-                        <div style="text-align:center; margin-top: 15px;">
+                        <label for="textLightColor">Text Light Color</label>
+                        <input type="color" id="textLightColor">
+
+                        <label for="accentGreenColor">Accent Green Color</label>
+                        <input type="color" id="accentGreenColor">
+
+                        <label for="accentBlueColor">Accent Blue Color</label>
+                        <input type="color" id="accentBlueColor">
+
+                        <div style="text-align:center; margin-top: 25px;">
                             <button onclick="saveTheme()">💾 Save</button>
                             <button onclick="resetTheme()">🔄 Reset</button>
                         </div>
@@ -1651,7 +1546,7 @@
         </main>
 
         <footer>
-            <p>© 2025 Minecraft Server Hub. Hosted via <a href="https://freemcserver.net" target="_blank">FreeMcServer.net</a></p>
+            <p>&copy; 2025 Minecraft Server. Hosted via <a href="https://freemcserver.net" target="_blank">FreeMcServer.net</a></p>
         </footer>
     </div>
 
@@ -1660,17 +1555,17 @@
         const messageBoxOverlay = document.getElementById('message-box-overlay');
         const messageBoxTitle = document.getElementById('message-box-title');
         const messageBoxContent = document.getElementById('message-box-content');
-        const messageBoxCloseBtn = document.getElementById('message-box-close-btn');
 
-        function showCustomAlert(title, message) {
+        // Function to show custom alert that auto-dismisses
+        function showCustomAlert(title, message, duration = 3000) { // Default 3 seconds
             messageBoxTitle.textContent = title;
             messageBoxContent.textContent = message;
             messageBoxOverlay.classList.add('active');
-        }
 
-        messageBoxCloseBtn.addEventListener('click', () => {
-            messageBoxOverlay.classList.remove('active');
-        });
+            setTimeout(() => {
+                messageBoxOverlay.classList.remove('active');
+            }, duration);
+        }
 
         // Intercept standard alert calls to use custom box (for development/testing)
         const originalAlert = window.alert;
@@ -1737,12 +1632,12 @@
                             resolve({ success: true, user: user.profile, email: user.email, uid: user.uid });
                         } else {
                             console.log('Simulated API Login Failed for:', email);
-                            resolve({ success: false, message: 'Invalid email or password.' });
+                            resolve({ success: false, message: 'Invalid username/email or password.' });
                         }
                     }, 500);
                 });
             },
-            async register(email, password, minecraftUsername, accountName) {
+            async register(email, password, minecraftUsername, accountName, minecraftEdition) { // Added minecraftEdition
                 return new Promise(resolve => {
                     setTimeout(() => { // Simulate network delay
                         const lowerCaseEmail = email.toLowerCase();
@@ -1758,8 +1653,7 @@
                             uid: uid,
                             profile: {
                                 minecraftUsername: minecraftUsername,
-                                discordUsername: '',
-                                instagramUsername: '',
+                                minecraftEdition: minecraftEdition, // Store edition
                                 accountId: uid,
                                 accountName: accountName,
                                 avatar: ''
@@ -1781,6 +1675,7 @@
                             return;
                         }
                         const user = JSON.parse(userJson);
+                        // Merge newProfileData, ensuring tickets array is not overwritten
                         user.profile = { ...user.profile, ...newProfileData };
                         putSimulatedKV(email.toLowerCase(), JSON.stringify(user));
                         console.log('Simulated API Update Profile Success for:', email);
@@ -1819,6 +1714,7 @@
         const MAIN_AUTH_PASSWORD_INPUT = document.getElementById('auth-password-input');
         const AUTH_MINECRAFT_USERNAME_INPUT = document.getElementById('auth-minecraft-username-input');
         const AUTH_ACCOUNT_NAME_INPUT = document.getElementById('auth-account-name-input');
+        const AUTH_PLATFORM_SELECT = document.getElementById('auth-platform-select'); // New platform select
         const RULES_CHECKBOX_CONTAINER = document.getElementById('rules-checkbox-container');
         const AGREE_RULES_CHECKBOX = document.getElementById('agree-rules-checkbox');
         const MAIN_AUTH_MESSAGE_ELEM = document.getElementById('auth-message-main');
@@ -1828,14 +1724,11 @@
         const PROFILE_FORM = document.getElementById('profile-form');
         const DISPLAY_EMAIL = document.getElementById('display-email');
         const DISPLAY_MINECRAFT_USERNAME = document.getElementById('display-minecraft-username');
-        const DISPLAY_DISCORD_USERNAME = document.getElementById('display-discord-username');
-        const DISPLAY_INSTAGRAM_USERNAME = document.getElementById('display-instagram-username');
+        const DISPLAY_MINECRAFT_EDITION = document.getElementById('display-minecraft-edition'); // New display for edition
         const DISPLAY_ACCOUNT_ID = document.getElementById('display-account-id');
         const DISPLAY_ACCOUNT_NAME = document.getElementById('display-account-name');
 
         const MINECRAFT_USERNAME_INPUT = document.getElementById('minecraft-username');
-        const DISCORD_USERNAME_INPUT = document.getElementById('discord-username');
-        const INSTAGRAM_USERNAME_INPUT = document.getElementById('instagram-username');
         const ACCOUNT_NAME_INPUT = document.getElementById('account-name');
 
         const PROFILE_MESSAGE_ELEM = document.getElementById('profile-message');
@@ -1872,28 +1765,57 @@
             isCreateMode = mode;
             MAIN_AUTH_MESSAGE_ELEM.textContent = ''; // Clear messages
 
+            // Hide all create-account-specific fields first
+            AUTH_MINECRAFT_USERNAME_INPUT.style.display = 'none';
+            AUTH_ACCOUNT_NAME_INPUT.style.display = 'none';
+            AUTH_PLATFORM_SELECT.style.display = 'none';
+            document.querySelector('label[for="auth-platform-select"]').style.display = 'none'; // Hide label too
+            RULES_CHECKBOX_CONTAINER.style.display = 'none';
+            AUTH_MINECRAFT_USERNAME_INPUT.removeEventListener('input', forceDotPrefix); // Remove listener when not in bedrock create mode
+
+
             if (isCreateMode) {
-                AUTH_WELCOME_MESSAGE.textContent = '✨ Create Your Miner Account!';
+                AUTH_WELCOME_MESSAGE.textContent = 'Thanks for Joining!';
                 AUTH_MINECRAFT_USERNAME_INPUT.style.display = 'block';
                 AUTH_ACCOUNT_NAME_INPUT.style.display = 'block';
+                AUTH_PLATFORM_SELECT.style.display = 'block';
+                document.querySelector('label[for="auth-platform-select"]').style.display = 'block';
                 RULES_CHECKBOX_CONTAINER.style.display = 'flex'; // Show rules checkbox
                 MAIN_AUTH_SUBMIT_BTN.textContent = 'Register Account';
-                TOGGLE_AUTH_MODE_BTN.textContent = 'Back to Login';
+                TOGGLE_AUTH_MODE_BTN.textContent = 'Have an account? Login'; // Changed text
             } else {
-                AUTH_WELCOME_MESSAGE.textContent = '✨ Join the Adventure, Miner!';
-                AUTH_MINECRAFT_USERNAME_INPUT.style.display = 'none';
-                AUTH_ACCOUNT_NAME_INPUT.style.display = 'none';
-                RULES_CHECKBOX_CONTAINER.style.display = 'none'; // Hide rules checkbox
+                AUTH_WELCOME_MESSAGE.textContent = 'Welcome Back!';
                 MAIN_AUTH_SUBMIT_BTN.textContent = 'Login';
-                TOGGLE_AUTH_MODE_BTN.textContent = 'Create Account';
+                TOGGLE_AUTH_MODE_BTN.textContent = 'Don\'t have an account? Create one'; // Changed text
             }
             // Clear inputs when switching modes
             MAIN_AUTH_EMAIL_INPUT.value = '';
             MAIN_AUTH_PASSWORD_INPUT.value = '';
             AUTH_MINECRAFT_USERNAME_INPUT.value = '';
             AUTH_ACCOUNT_NAME_INPUT.value = '';
+            AUTH_PLATFORM_SELECT.value = ''; // Reset platform select
             AGREE_RULES_CHECKBOX.checked = false;
         }
+
+        // Event listener for platform selection
+        AUTH_PLATFORM_SELECT.addEventListener('change', () => {
+            if (AUTH_PLATFORM_SELECT.value === 'bedrock') {
+                // Prepend and make non-removable dot for Bedrock
+                AUTH_MINECRAFT_USERNAME_INPUT.value = '.';
+                AUTH_MINECRAFT_USERNAME_INPUT.addEventListener('input', forceDotPrefix);
+            } else {
+                AUTH_MINECRAFT_USERNAME_INPUT.removeEventListener('input', forceDotPrefix);
+                AUTH_MINECRAFT_USERNAME_INPUT.value = ''; // Clear if not bedrock
+            }
+        });
+
+        // Function to force the dot prefix for Bedrock usernames
+        function forceDotPrefix() {
+            if (AUTH_PLATFORM_SELECT.value === 'bedrock' && !AUTH_MINECRAFT_USERNAME_INPUT.value.startsWith('.')) {
+                AUTH_MINECRAFT_USERNAME_INPUT.value = '.' + AUTH_MINECRAFT_USERNAME_INPUT.value.replace(/^\.+/, ''); // Ensure only one dot at start
+            }
+        }
+
 
         TOGGLE_AUTH_MODE_BTN.addEventListener('click', (e) => {
             e.preventDefault();
@@ -1911,9 +1833,10 @@
                 // Register logic
                 const minecraftUsername = AUTH_MINECRAFT_USERNAME_INPUT.value.trim();
                 const accountName = AUTH_ACCOUNT_NAME_INPUT.value.trim();
+                const minecraftEdition = AUTH_PLATFORM_SELECT.value; // Get selected edition
 
-                if (!email || !password || !minecraftUsername || !accountName) {
-                    showCustomMessage(MAIN_AUTH_MESSAGE_ELEM, 'Please fill all fields for registration.', 'error');
+                if (!email || !password || !minecraftUsername || !accountName || !minecraftEdition) {
+                    showCustomMessage(MAIN_AUTH_MESSAGE_ELEM, 'Please fill all required fields for registration (including Minecraft Edition).', 'error');
                     return;
                 }
                 if (!AGREE_RULES_CHECKBOX.checked) {
@@ -1921,7 +1844,7 @@
                     return;
                 }
 
-                const response = await simulatedCloudflareApi.register(email, password, minecraftUsername, accountName);
+                const response = await simulatedCloudflareApi.register(email, password, minecraftUsername, accountName, minecraftEdition); // Pass edition
 
                 if (response.success) {
                     currentUser = { email: response.email, uid: response.uid };
@@ -1956,7 +1879,7 @@
             document.getElementById('main-content-wrapper').style.display = 'block';
             console.log('Auth successful: showing main content.');
             renderProfile(); // Populate profile fields and header profile
-            renderPlugins([...pluginsData].sort((a,b) => a.name.localeCompare(b.name))); // Initial render of sorted plugins
+            renderPlugins(pluginsData); // Initial render of sorted plugins
             showSection('server-info-content'); // Default to SERVER DETAILS on home
             fetchServerStatus(); // Fetch server status immediately
         }
@@ -1967,15 +1890,12 @@
                 // Display fields in Account Settings
                 DISPLAY_EMAIL.textContent = currentUser.email;
                 DISPLAY_MINECRAFT_USERNAME.textContent = userProfile.minecraftUsername || 'N/A';
-                DISPLAY_DISCORD_USERNAME.textContent = userProfile.discordUsername || 'N/A';
-                DISPLAY_INSTAGRAM_USERNAME.textContent = userProfile.instagramUsername || 'N/A';
+                DISPLAY_MINECRAFT_EDITION.textContent = (userProfile.minecraftEdition === 'java' ? 'Java Edition' : (userProfile.minecraftEdition === 'bedrock' ? 'Bedrock Edition' : 'N/A')); // Display edition
                 DISPLAY_ACCOUNT_ID.textContent = currentUser.uid || 'N/A';
                 DISPLAY_ACCOUNT_NAME.textContent = userProfile.accountName || 'N/A';
 
                 // Input fields (for editing) in Account Settings
                 MINECRAFT_USERNAME_INPUT.value = userProfile.minecraftUsername || '';
-                DISCORD_USERNAME_INPUT.value = userProfile.discordUsername || '';
-                INSTAGRAM_USERNAME_INPUT.value = userProfile.instagramUsername || '';
                 ACCOUNT_NAME_INPUT.value = userProfile.accountName || '';
 
                 // Render header profile picture
@@ -2022,8 +1942,6 @@
 
             const updatedProfile = {
                 minecraftUsername: MINECRAFT_USERNAME_INPUT.value,
-                discordUsername: DISCORD_USERNAME_INPUT.value,
-                instagramUsername: INSTAGRAM_USERNAME_INPUT.value,
                 accountName: ACCOUNT_NAME_INPUT.value,
                 avatar: userProfile.avatar // Retain current avatar unless changed via file input
             };
@@ -2093,12 +2011,12 @@
                 showCustomMessage(CHANGE_PASSWORD_MESSAGE, 'All password fields are required.', 'error');
                 return;
             }
-            if (newPassword !== confirmNewPassword) {
-                showCustomMessage(CHANGE_PASSWORD_MESSAGE, 'New password and confirmation do not match.', 'error');
-                return;
-            }
             if (newPassword.length < 6) { // Example strength check
                 showCustomMessage(CHANGE_PASSWORD_MESSAGE, 'New password must be at least 6 characters long.', 'error');
+                return;
+            }
+            if (newPassword !== confirmNewPassword) {
+                showCustomMessage(CHANGE_PASSWORD_MESSAGE, 'New password and confirmation do not match.', 'error');
                 return;
             }
 
@@ -2154,6 +2072,7 @@
                 section.classList.remove('active');
             });
 
+            // Adjust homepage nav section visibility based on the type of content
             if (['server-info-content', 'plugins-content', 'how-to-play-content'].includes(sectionId)) {
                 HOMEPAGE_NAV_SECTION.style.display = 'flex'; // Show the main buttons
                 document.getElementById(sectionId).classList.add('active'); // Show the requested content below
@@ -2177,7 +2096,12 @@
 
         // Add click listeners to sidebar navigation links
         SIDEBAR_NAV_LINKS.forEach(link => {
-            if (link.dataset.section) {
+            // Check if the link should open an external URL (like Discord/Instagram)
+            if (link.href && link.target === '_blank') {
+                link.addEventListener('click', (e) => {
+                    // Do nothing, let the browser handle the target="_blank"
+                });
+            } else if (link.dataset.section) {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     showSection(link.dataset.section);
@@ -2187,91 +2111,66 @@
         });
 
 
-        // --- Server Status Script (Integrated with player names if available) ---
+        // --- Server Status Script (Directly provided logic) ---
         const serverIP = "mc1524209.fmcs.cloud"; // Your FreeMcServer IP
-        const SERVER_CONTROL_OPTIONS = document.getElementById('server-control-options');
-
-        // Simulated server state (for testing Expired/Online/Offline)
-        let simulatedServerState = {
-            online: false,
-            expired: false,
-            lastKnownOnlinePlayers: 0,
-            lastChecked: Date.now() // To simulate expiration over time if desired
-        };
-
-        // Function to randomly change server state for testing
-        function updateSimulatedServerState() {
-            const now = Date.now();
-            // Simulate random changes
-            const random = Math.random();
-            if (random < 0.2) { // 20% chance to be expired
-                simulatedServerState.expired = true;
-                simulatedServerState.online = false;
-            } else if (random < 0.5) { // 30% chance to be offline (not expired)
-                simulatedServerState.expired = false;
-                simulatedServerState.online = false;
-            } else { // 50% chance to be online
-                simulatedServerState.expired = false;
-                simulatedServerState.online = true;
-                simulatedServerState.lastKnownOnlinePlayers = Math.floor(Math.random() * 20) + 1; // 1 to 20 players
-            }
-            simulatedServerState.lastChecked = now;
-            console.log('Simulated Server State Updated:', simulatedServerState);
-        }
-
-        // Update state every 30 seconds for dynamic testing (optional, can be removed)
-        // setInterval(updateSimulatedServerState, 30000); // Update every 30 seconds
 
         async function fetchServerStatus() {
-            // In a real scenario, you'd fetch from mcsrvstat.us and potentially your own backend
-            // For now, use the simulated state.
-            updateSimulatedServerState(); // Update state before fetching for UI
-
-            const statusSpan = document.getElementById("server-status");
-            const playersSpan = document.getElementById("player-count");
+            const statusDiv = document.getElementById("server-status");
+            const playersDiv = document.getElementById("player-count");
             const onlinePlayersList = document.getElementById("online-players-list");
-            SERVER_CONTROL_OPTIONS.innerHTML = ''; // Clear previous buttons
+            const serverControlOptions = document.getElementById('server-control-options');
+            serverControlOptions.innerHTML = ''; // Clear previous buttons
 
-            let statusMessage = "Checking status...";
-            let statusClass = "";
-            let playerCountMessage = "";
-            let playersListHtml = '';
-            let controlButton = '';
+            // Update static IP/Port displays (always the same)
+            document.getElementById("server-ip").textContent = serverIP;
+            document.getElementById("server-port").textContent = "38762"; // Hardcoded as requested
 
-            if (simulatedServerState.expired) {
-                statusMessage = "❌ Expired";
-                statusClass = "status-expired";
-                playerCountMessage = "";
-                playersListHtml = '<li>Server subscription has expired.</li>';
-                controlButton = `<a href="https://panel.freemcserver.net/server/1524209/renew-basic" target="_blank"><button style="background-color: var(--button-red);"><i class="fas fa-redo-alt"></i> Renew Server</button></a>`;
-            } else if (!simulatedServerState.online) {
-                statusMessage = "🔴 Offline";
-                statusClass = "status-offline";
-                playerCountMessage = "";
-                playersListHtml = '<li>Server is offline.</li>';
-                controlButton = `<a href="https://freemcserver.net/server/1524209" target="_blank"><button style="background-color: var(--button-primary);"><i class="fas fa-play"></i> Start Server</button></a>`;
-            } else {
-                statusMessage = "✅ Online";
-                statusClass = "status-online";
-                playerCountMessage = `👥 ${simulatedServerState.lastKnownOnlinePlayers}/20 Players`;
-                if (simulatedServerState.lastKnownOnlinePlayers > 0) {
-                    // Simulate player names for online state
-                    const onlinePlayers = Array.from({length: simulatedServerState.lastKnownOnlinePlayers}, (_, i) => `Player${Math.floor(Math.random() * 1000) + 1}`);
-                    playersListHtml = onlinePlayers.map(p => `<li><span>${p}</span></li>`).join('');
-                } else {
-                    playersListHtml = '<li>No players currently online.</li>';
+            try {
+                const res = await fetch(`https://api.mcsrvstat.us/2/${serverIP}`);
+                const data = await res.json();
+
+                if (!data || typeof data.online === "undefined") {
+                    statusDiv.innerHTML = "⚠️ Error checking server status.";
+                    statusDiv.className = "status-offline";
+                    playersDiv.innerHTML = "";
+                    onlinePlayersList.innerHTML = '<li>Error: Could not retrieve server status.</li>';
+                    serverControlOptions.innerHTML = `<a href="https://freemcserver.net/server/1524209" target="_blank"><button style="background-color: var(--button-primary);"><i class="fas fa-play"></i> Start Server</button></a>`;
+                    return;
                 }
-            }
 
-            statusSpan.textContent = statusMessage;
-            statusSpan.className = statusClass; // Apply dynamic class
-            playersSpan.textContent = playerCountMessage;
-            onlinePlayersList.innerHTML = playersListHtml;
-            SERVER_CONTROL_OPTIONS.innerHTML = controlButton;
+                if (!data.online) {
+                    statusDiv.innerHTML = "🔴 Offline";
+                    statusDiv.className = "status-offline";
+                    playersDiv.innerHTML = "";
+                    onlinePlayersList.innerHTML = '<li>Server is offline. Invalid player names (server does not exist to provide names).</li>';
+                    serverControlOptions.innerHTML = `<a href="https://freemcserver.net/server/1524209" target="_blank"><button style="background-color: var(--button-primary);"><i class="fas fa-play"></i> Start Server</button></a>`;
+                } else {
+                    statusDiv.innerHTML = "🟢 Online";
+                    statusDiv.className = "status-online";
+                    playersDiv.innerHTML = `👥 ${data.players.online}/${data.players.max} Players`;
+                    serverControlOptions.innerHTML = `<button style="background-color: var(--button-red);" disabled><i class="fas fa-stop"></i> Server Running</button>`;
+
+                    // Display online players
+                    let playersListHtml = '';
+                    if (data.players && data.players.list && data.players.list.length > 0) {
+                        playersListHtml = data.players.list.map(p => `<li><span>${p}</span></li>`).join('');
+                    } else {
+                        playersListHtml = '<li>No players currently online.</li>';
+                    }
+                    onlinePlayersList.innerHTML = playersListHtml;
+                }
+            } catch (error) {
+                console.error("Fetch error:", error);
+                statusDiv.innerHTML = "⚠️ Network Error: Cannot reach API.";
+                statusDiv.className = "status-offline";
+                playersDiv.innerHTML = "";
+                onlinePlayersList.innerHTML = '<li>Network error. Please check your connection.</li>';
+                serverControlOptions.innerHTML = `<a href="https://freemcserver.net/server/1524209" target="_blank"><button style="background-color: var(--button-primary);"><i class="fas fa-play"></i> Start Server</button></a>`;
+            }
         }
 
-        // Fetch server status every 10 seconds after initial display
-        setInterval(fetchServerStatus, 10000);
+        fetchServerStatus(); // Initial call
+        setInterval(fetchServerStatus, 5000); // Repeat every 5 seconds
 
 
         // --- Copy-to-Clipboard ---
@@ -2287,69 +2186,126 @@
 
         // --- Plugin Data & Render Logic ---
         const pluginsData = [
-            { name: "EssentialsX", description: "Core plugin for server management, homes, warps, kits, and more.", videoLink: "https://www.youtube.com/embed/example1", detailsLink: "https://essentialsx.net/wiki.html" },
-            { name: "LuckPerms", description: "Powerful permissions plugin with a web editor.", videoLink: "https://www.youtube.com/embed/example2", detailsLink: "https://luckperms.net/" },
-            { name: "WorldEdit", description: "Fast and easy to use in-game world editor.", videoLink: "https://www.youtube.com/embed/example3", detailsLink: "https://enginehub.org/worldedit/" },
-            { name: "GriefPrevention", description: "Prevents griefing and protects player builds with land claims.", videoLink: "https://www.youtube.com/embed/example4", detailsLink: "https://www.spigotmc.org/resources/griefprevention.1884/" },
-            { name: "PlaceholderAPI", description: "Adds placeholders to plugins, allowing dynamic text display.", videoLink: "https://www.youtube.com/embed/example5", detailsLink: "https://www.spigotmc.org/resources/placeholderapi.6245/" },
-            { name: "Vault", description: "A permissions, chat, & economy API to allow plugins to hook into.", videoLink: "https://www.youtube.com/embed/example6", detailsLink: "https://www.spigotmc.org/resources/vault.34315/" }
-            // Add more plugins here
+            { name: "EssentialsX", description: "Core plugin for server management, homes, warps, kits, and more.", videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ", detailsLink: "https://essentialsx.net/wiki.html", status: "working" },
+            { name: "LuckPerms", description: "Powerful permissions plugin with a web editor.", videoLink: "", detailsLink: "https://luckperms.net/", status: "working" },
+            { name: "WorldEdit", description: "Fast and easy to use in-game world editor.", videoLink: "https://www.youtube.com/embed/aYd2I9B5G60", detailsLink: "https://enginehub.org/worldedit/", status: "working" },
+            { name: "GriefPrevention", description: "Prevents griefing and protects player builds with land claims.", videoLink: "https://www.youtube.com/embed/p_G-o2r9D2s", detailsLink: "https://www.spigotmc.org/resources/griefprevention.1884/", status: "working" },
+            { name: "PlaceholderAPI", description: "Adds placeholders to plugins, allowing dynamic text display.", videoLink: "", detailsLink: "https://www.spigotmc.org/resources/placeholderapi.6245/", status: "working" },
+            { name: "Vault", description: "A permissions, chat, & economy API to allow plugins to hook into.", videoLink: "https://www.youtube.com/embed/lIeXvD3xG4w", detailsLink: "https://www.spigotmc.org/resources/vault.34315/", status: "working" },
+            { name: "EconomyTaxerWeb", description: "This custom plugin is not made by CraftOne. Unsupported version by Ansh_2613 and i._Sakshamm.", videoLink: "", detailsLink: "", status: "non-working", problem: "This custom plugin is not made by CraftOne. Unsupported version by Ansh_2613 and i._Sakshamm." }, // Updated problem
+            { name: "Movecraft", description: "Allows players to build and pilot custom ships and vehicles.", videoLink: "https://www.youtube.com/embed/some_movecraft_video", detailsLink: "https://www.spigotmc.org/resources/movecraft.20364/", status: "non-working", problem: "Unsupported version." } // Updated problem
+            // Add more plugins here with their status
         ];
+
+        const pluginSubNavButtons = document.querySelectorAll('#plugins-content .player-sub-nav button');
+        let currentPluginFilter = "all-plugins"; // Default filter
 
         function renderPlugins(pluginsToRender) {
             const pluginListElement = document.getElementById("plugin-list");
             pluginListElement.innerHTML = ''; // Clear existing list
 
-            if (pluginsToRender.length === 0) {
-                pluginListElement.innerHTML = '<li style="text-align: center; color: #ccc; padding: 20px;">No plugins found matching your search.</li>';
+            let filteredPlugins = pluginsToRender;
+
+            if (currentPluginFilter === "non-working-plugins") {
+                filteredPlugins = pluginsToRender.filter(p => p.status === "non-working").sort((a,b) => a.name.localeCompare(b.name));
+            } else { // "all-plugins" - sort working first, then non-working
+                const workingPlugins = pluginsToRender.filter(p => p.status === "working").sort((a,b) => a.name.localeCompare(b.name));
+                const nonWorkingPlugins = pluginsToRender.filter(p => p.status === "non-working").sort((a,b) => a.name.localeCompare(b.name));
+                filteredPlugins = [...workingPlugins, ...nonWorkingPlugins];
+            }
+
+
+            if (filteredPlugins.length === 0) {
+                pluginListElement.innerHTML = '<li style="text-align: center; color: #ccc; padding: 20px;">No plugins found matching your criteria.</li>';
                 return;
             }
 
-            pluginsToRender.forEach(plugin => {
+            filteredPlugins.forEach(plugin => {
                 const li = document.createElement("li");
+                let videoHtml = '';
+                if (plugin.videoLink) {
+                    videoHtml = `
+                        <div class="plugin-video">
+                            <iframe src="${plugin.videoLink}"
+                                    title="${plugin.name} Tutorial"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen>
+                            </iframe>
+                        </div>`;
+                } else {
+                    videoHtml = `
+                        <div class="plugin-video placeholder">
+                            No tutorial video available for this plugin.
+                        </div>`;
+                }
+
+                let problemMessageHtml = '';
+                if (plugin.status === "non-working" && plugin.problem) {
+                    problemMessageHtml = `<p class="problem-message">Problem: ${plugin.problem}</p>`;
+                    li.classList.add('non-working-plugin'); // Add class for styling
+                }
+
                 li.innerHTML = `
                     <h3>${plugin.name}</h3>
                     <p class="description">${plugin.description}</p>
-                    <div class="plugin-video">
-                        <iframe src="${plugin.videoLink}"
-                                title="${plugin.name} Tutorial"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowfullscreen>
-                        </iframe>
-                    </div>
+                    ${problemMessageHtml}
+                    ${videoHtml}
                     <div class="plugin-links">
-                        <a class="plugin-link-btn" href="${plugin.detailsLink}" target="_blank">
+                        ${plugin.detailsLink ? `<a class="plugin-link-btn" href="${plugin.detailsLink}" target="_blank">
                             <i class="fas fa-info-circle"></i> Details
-                        </a>
+                        </a>` : ''}
                     </div>
                 `;
                 pluginListElement.appendChild(li);
             });
         }
 
-        // Plugin Search Filter
+        // Plugin sub-navigation click handlers
+        pluginSubNavButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                pluginSubNavButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                currentPluginFilter = button.dataset.pluginSubSection;
+                renderPlugins(pluginsData); // Re-render with new filter
+            });
+        });
+
+
+        // Plugin Search Filter (filters the currently displayed set)
         const searchInput = document.getElementById("plugin-search");
         searchInput.addEventListener("input", function () {
             const filter = this.value.toLowerCase();
-            const filteredPlugins = pluginsData.filter(plugin =>
+            let pluginsToSearch = pluginsData;
+            // The sorting logic in renderPlugins already handles the "all-plugins" view
+            // and the "non-working-plugins" filter.
+            // We only need to pass the full pluginsData to renderPlugins and let it sort/filter.
+
+            const filteredPlugins = pluginsToSearch.filter(plugin =>
                 plugin.name.toLowerCase().includes(filter) ||
                 plugin.description.toLowerCase().includes(filter)
             );
-            renderPlugins(filteredPlugins);
+            renderPlugins(filteredPlugins); // Always re-render based on current filter and search
         });
 
-        // --- Players Section Logic ---
+        // --- Players Section Logic (ONLY PLAYERS FROM IMAGE) ---
         const playerSubNavButtons = document.querySelectorAll('#players-content .player-sub-nav button');
         const playerSubContents = document.querySelectorAll('#players-content .player-sub-content');
         const allPlayersList = document.getElementById('all-players-list');
         const allPlayersSearch = document.getElementById('all-players-search');
+        const richestPlayersList = document.getElementById('richest-players-list');
+        const taxedPlayersList = document.getElementById('taxed-players-list');
 
+        // This data now STRICTLY reflects players from the image with CORRECTED balances
         const allPlayersData = [
-            'TestMiner26', 'AdventurerX', 'CraftMaster', 'ExplorerSteve', 'RedstoneGenius',
-            'PixelBuilder', 'MineCrafterPro', 'GamerGuy88', 'DiamondHunter', 'CreeperKing',
-            'NoobSlayer', 'ProBuilder', 'FarmGirl', 'VillageProtector', 'ZombieKiller',
-            'SkeletonArcher', 'WitherBoss', 'EnderDragonSlayer', 'PvPKiller', 'LavaDiver'
+            { name: 'Ansh', status: 'Online', edition: 'Java', balance: 1673671.60, taxPaid: 171693.69 },
+            { name: '.Atharva3044', status: 'Online', edition: 'Bedrock', balance: 879.97, taxPaid: 23780.87 }, // Exchanged balance
+            { name: '.Atharva4617', status: 'Offline', edition: 'Bedrock', balance: 893572.56, taxPaid: 20683 }, // Exchanged balance
         ];
+
+        // Ensure these are derived *after* allPlayersData is complete and sorted.
+        const topRichestData = [...allPlayersData].sort((a, b) => b.balance - a.balance).slice(0, 3);
+        const topTaxedData = [...allPlayersData].sort((a, b) => b.taxPaid - a.taxPaid).slice(0, 3);
+
 
         function showPlayerSubSection(sectionId) {
             playerSubContents.forEach(content => {
@@ -2363,7 +2319,11 @@
             document.querySelector(`[data-player-sub-section="${sectionId.replace('-content', '')}"]`).classList.add('active');
 
             if (sectionId === 'all-players-content') {
-                renderAllPlayers(allPlayersData); // Render on activation
+                renderAllPlayers(allPlayersData); // Render all players on activation
+            } else if (sectionId === 'top-richest-content') {
+                renderRichestPlayers();
+            } else if (sectionId === 'top-taxed-content') {
+                renderTaxedPlayers();
             }
         }
 
@@ -2375,10 +2335,30 @@
             }
             playersToRender.forEach(player => {
                 const li = document.createElement('li');
-                li.innerHTML = `<strong>${player}:</strong> <span>Online</span>`; // Example: Always online for simplicity
+                // Displaying only name, status, and edition as requested
+                li.innerHTML = `<strong>${player.name}:</strong> <span>${player.status}, Edition: ${player.edition}</span>`;
                 allPlayersList.appendChild(li);
             });
         }
+
+        function renderRichestPlayers() {
+            richestPlayersList.innerHTML = '';
+            topRichestData.forEach((player, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>${index + 1}. ${player.name}:</strong> <span>$${player.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>`;
+                richestPlayersList.appendChild(li);
+            });
+        }
+
+        function renderTaxedPlayers() {
+            taxedPlayersList.innerHTML = '';
+            topTaxedData.forEach((player, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>${index + 1}. ${player.name}:</strong> <span>$${player.taxPaid.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>`;
+                taxedPlayersList.appendChild(li);
+            });
+        }
+
 
         playerSubNavButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -2391,34 +2371,34 @@
         allPlayersSearch.addEventListener('input', function() {
             const filter = this.value.toLowerCase();
             const filteredPlayers = allPlayersData.filter(player =>
-                player.toLowerCase().includes(filter)
+                player.name.toLowerCase().includes(filter)
             );
             renderAllPlayers(filteredPlayers);
         });
 
 
-        // --- Contact Form Submission ---
-        document.getElementById("contact-form").addEventListener("submit", function (e) {
+        // --- Contact Us Form Submission ---
+        const contactUsForm = document.getElementById("contact-us-form");
+        const contactUsStatus = document.getElementById("contact-us-status");
+
+        contactUsForm.addEventListener("submit", function (e) {
             e.preventDefault();
 
-            const name = document.getElementById("contact-name").value.trim();
-            const discord = document.getElementById("contact-discord").value.trim();
-            const minecraft = document.getElementById("contact-minecraft").value.trim();
+            const minecraftUsername = document.getElementById("contact-minecraft-username").value.trim();
+            const discordId = document.getElementById("contact-discord-id").value.trim();
             const message = document.getElementById("contact-message").value.trim();
-            const status = document.getElementById("contact-status");
 
-            if (!discord || !minecraft || !message) {
-                status.innerText = "⚠️ Please fill in all required fields.";
-                status.classList.add('error');
+            if (!minecraftUsername || !discordId || !message) {
+                contactUsStatus.innerText = "⚠️ Please fill in all required fields.";
+                contactUsStatus.classList.add('error');
                 return;
             }
 
-            const fullMessage = `📨 **New Contact Form Submission**:
-👤 Name: **${name || "Not Provided"}**
-🎮 Minecraft Username: **${minecraft}**
-💬 Discord ID: **${discord}**
-
-📝 Message:
+            const fullMessage = `📧 **NEW CONTACT US MESSAGE** 📧
+**Submitted By Email:** ${currentUser ? currentUser.email : 'Not Logged In'} (UID: ${currentUser ? currentUser.uid : 'N/A'})
+**Minecraft User:** ${minecraftUsername}
+**Discord ID:** ${discordId}
+**Message:**
 ${message}`;
 
             fetch("https://discordapp.com/api/webhooks/1383347956182290462/b1k7PVanxmP6InWfH9k4Npj7WNP9dUM-nD6xXRZGZwFOsODahyDoBnxlmNdGCCyLDetz", {
@@ -2430,55 +2410,63 @@ ${message}`;
             })
             .then(res => {
                 if (res.ok) {
-                    status.innerText = "✅ Message sent successfully!";
-                    status.classList.remove('error');
-                    document.getElementById("contact-form").reset();
+                    contactUsStatus.innerText = "✅ Message sent successfully! We'll get back to you soon.";
+                    contactUsStatus.classList.remove('error');
+                    contactUsForm.reset();
                 } else {
-                    status.innerText = "❌ Failed to send. Try again later.";
-                    status.classList.add('error');
+                    contactUsStatus.innerText = "❌ Failed to send. Try again later.";
+                    contactUsStatus.classList.add('error');
                 }
             })
             .catch(error => {
                 console.error("Contact form error:", error);
-                status.innerText = "❌ Error sending message.";
-                status.classList.add('error');
+                contactUsStatus.innerText = "❌ Error sending message.";
+                contactUsStatus.classList.add('error');
             });
         });
+
 
         // --- Theme Panel Logic ---
         function applyTheme() {
             const root = document.documentElement.style;
-            const keys = [
-                '--box-color',
-                '--glow-color',
-                '--glow-speed',
-                '--glow-brightness',
-                '--bg-theme'
-            ];
-            keys.forEach(key => {
-                const val = localStorage.getItem(key);
-                if (val) root.setProperty(key, val);
-            });
+            const savedBoxColor = localStorage.getItem("--box-color");
+            const savedGlowColor = localStorage.getItem("saved-glow-color");
+            const savedGlowSpeed = localStorage.getItem("--glow-speed");
+            const savedGlowBrightness = localStorage.getItem("--glow-brightness");
+            const savedBgTheme = localStorage.getItem("--bg-theme");
+            const savedGlowEnabled = localStorage.getItem("--glow-enabled");
+            const savedTextLight = localStorage.getItem("--text-light");
+            const savedAccentGreen = localStorage.getItem("--accent-green");
+            const savedAccentBlue = localStorage.getItem("--accent-blue");
 
-            const enableGlow = localStorage.getItem("--glow-enabled");
+
+            if (savedBoxColor) root.setProperty('--box-color', savedBoxColor);
+            if (savedGlowSpeed) root.setProperty('--glow-speed', savedGlowSpeed);
+            if (savedGlowBrightness) root.setProperty('--glow-brightness', savedGlowBrightness);
+            if (savedBgTheme) root.setProperty('--bg-theme', savedBgTheme);
+            if (savedTextLight) root.setProperty('--text-light', savedTextLight);
+            if (savedAccentGreen) root.setProperty('--accent-green', savedAccentGreen);
+            if (savedAccentBlue) root.setProperty('--accent-blue', savedAccentBlue);
+
+            // Apply glow based on toggle state
             const glowToggleCheckbox = document.getElementById("glowToggle");
             if (glowToggleCheckbox) {
-                glowToggleCheckbox.checked = (enableGlow === "true");
+                glowToggleCheckbox.checked = (savedGlowEnabled === "true");
+                root.setProperty('--glow-color', (savedGlowEnabled === "true" && savedGlowColor) ? savedGlowColor : "transparent");
+            } else {
+                root.setProperty('--glow-color', (savedGlowEnabled === "true" && savedGlowColor) ? savedGlowColor : "transparent");
             }
 
-            const savedGlowColor = localStorage.getItem("saved-glow-color") || "#00ffcc";
-            root.setProperty('--glow-color', (enableGlow === "true") ? savedGlowColor : "transparent");
 
-            const boxColorInput = document.getElementById("boxColor");
-            if (boxColorInput) boxColorInput.value = localStorage.getItem("--box-color") || getComputedStyle(document.documentElement).getPropertyValue('--box-color');
-            const glowColorInput = document.getElementById("glowColor");
-            if (glowColorInput) glowColorInput.value = localStorage.getItem("saved-glow-color") || getComputedStyle(document.documentElement).getPropertyValue('--accent-green');
-            const glowSpeedInput = document.getElementById("glowSpeed");
-            if (glowSpeedInput) glowSpeedInput.value = parseFloat((localStorage.getItem("--glow-speed") || '3s').replace('s', ''));
-            const glowBrightnessInput = document.getElementById("glowBrightness");
-            if (glowBrightnessInput) glowBrightnessInput.value = parseFloat(localStorage.getItem("--glow-brightness") || '0.6');
-            const bgThemeInput = document.getElementById("bgTheme");
-            if (bgThemeInput) bgThemeInput.value = localStorage.getItem("--bg-theme") || getComputedStyle(document.documentElement).getPropertyValue('--bg-theme');
+            // Set input values to current theme values
+            document.getElementById("boxColor").value = savedBoxColor || getComputedStyle(document.documentElement).getPropertyValue('--box-color');
+            document.getElementById("glowColor").value = savedGlowColor || getComputedStyle(document.documentElement).getPropertyValue('--accent-green');
+            document.getElementById("glowSpeed").value = parseFloat((savedGlowSpeed || '3s').replace('s', ''));
+            document.getElementById("glowBrightness").value = parseFloat(savedGlowBrightness || '0.6');
+            document.getElementById("bgTheme").value = (savedBgTheme && !savedBgTheme.startsWith("url('") && !savedBgTheme.startsWith("linear-gradient")) ? savedBgTheme : ''; // Clear if complex gradient/url for input
+            document.getElementById("textLightColor").value = savedTextLight || getComputedStyle(document.documentElement).getPropertyValue('--text-light');
+            document.getElementById("accentGreenColor").value = savedAccentGreen || getComputedStyle(document.documentElement).getPropertyValue('--accent-green');
+            document.getElementById("accentBlueColor").value = savedAccentBlue || getComputedStyle(document.documentElement).getPropertyValue('--accent-blue');
         }
 
         function saveTheme() {
@@ -2489,23 +2477,31 @@ ${message}`;
             const brightness = document.getElementById("glowBrightness").value;
             let bg = document.getElementById("bgTheme").value.trim();
             const enableGlow = document.getElementById("glowToggle").checked;
+            const textLight = document.getElementById("textLightColor").value;
+            const accentGreen = document.getElementById("accentGreenColor").value;
+            const accentBlue = document.getElementById("accentBlueColor").value;
 
-            if (bg.startsWith("http")) {
-                bg = `url('${bg}')`;
-            }
 
             localStorage.setItem("--box-color", box);
-            localStorage.setItem("saved-glow-color", glow);
+            localStorage.setItem("saved-glow-color", glow); /* Store the glow color separately */
             localStorage.setItem("--glow-speed", speed);
             localStorage.setItem("--glow-brightness", brightness);
             localStorage.setItem("--bg-theme", bg);
             localStorage.setItem("--glow-enabled", enableGlow);
+            localStorage.setItem("--text-light", textLight);
+            localStorage.setItem("--accent-green", accentGreen);
+            localStorage.setItem("--accent-blue", accentBlue);
+
 
             root.setProperty("--box-color", box);
             root.setProperty("--glow-color", enableGlow ? glow : "transparent");
             root.setProperty("--glow-speed", speed);
             root.setProperty("--glow-brightness", brightness);
             root.setProperty("--bg-theme", bg);
+            root.setProperty("--text-light", textLight);
+            root.setProperty("--accent-green", accentGreen);
+            root.setProperty("--accent-blue", accentBlue);
+
 
             showCustomMessage(document.getElementById('theme-settings-content').querySelector('h2'), "🎨 Theme saved!", "success");
         }
@@ -2517,7 +2513,10 @@ ${message}`;
                 "--glow-speed": "3s",
                 "--glow-brightness": "0.6",
                 "--bg-theme": "linear-gradient(-45deg, #0a0a0a, #111111, #1a1a1a, #0d0d0d)",
-                "--glow-enabled": "false"
+                "--glow-enabled": "false",
+                "--text-light": "#e0e0e0",
+                "--accent-green": "#00ffcc",
+                "--accent-blue": "#42a5f5"
             };
 
             for (let key in defaults) {
@@ -2531,22 +2530,29 @@ ${message}`;
         // --- Custom Message Display for small inline messages (not the full modal alert) ---
         function showCustomMessage(element, message, type) {
             let msgElement = null;
-            // Check if element is a button, then find its parent's message area
-            if (element.tagName === 'BUTTON' || element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                msgElement = element.parentNode.querySelector('.custom-message') || element.closest('form').querySelector('.custom-message');
+            // Find the closest parent that can contain a message, or create one
+            const closestForm = element.closest('form');
+            if (closestForm) {
+                msgElement = closestForm.querySelector('.custom-message');
                 if (!msgElement) {
-                    msgElement = document.createElement('p'); // Use p for text messages
+                    msgElement = document.createElement('p');
                     msgElement.classList.add('custom-message');
-                    // Append after button or form
-                    if (element.tagName === 'BUTTON') {
-                        element.parentNode.appendChild(msgElement);
-                    } else {
-                        element.closest('form').appendChild(msgElement);
-                    }
+                    closestForm.appendChild(msgElement);
                 }
             } else {
-                // For existing message areas like #auth-message-main
-                msgElement = element;
+                // For existing message areas like #auth-message-main or section titles
+                if (element.tagName === 'H2' || element.tagName === 'P') {
+                    msgElement = element;
+                } else {
+                     // Fallback, append to body or a general area if specific parent not found
+                    msgElement = document.querySelector('#dynamic-content-area') || document.body;
+                    const existingTempMsg = msgElement.querySelector('.custom-message.temp');
+                    if(existingTempMsg) existingTempMsg.remove();
+                    const newTempMsg = document.createElement('p');
+                    newTempMsg.classList.add('custom-message', 'temp');
+                    msgElement.appendChild(newTempMsg);
+                    msgElement = newTempMsg;
+                }
             }
 
             if (msgElement) {
@@ -2555,9 +2561,13 @@ ${message}`;
                 setTimeout(() => {
                     msgElement.textContent = '';
                     msgElement.classList.remove('error', 'success');
+                    if (msgElement.classList.contains('temp')) {
+                        msgElement.remove(); // Remove temporary messages
+                    }
                 }, 3000); // Clear message after 3 seconds
             }
         }
+
 
         // --- Initial Load & Authentication Check ---
         window.addEventListener("DOMContentLoaded", () => {
@@ -2591,8 +2601,8 @@ ${message}`;
                 mainContentWrapper.style.display = "none";
             }
 
-            // Initial render of plugins (alphabetical order) for the Plugins section
-            renderPlugins([...pluginsData].sort((a,b) => a.name.localeCompare(b.name)));
+            // Initial render of plugins (alphabetical order with non-working at bottom)
+            renderPlugins(pluginsData);
             // Initial render for players section (default to richest)
             showPlayerSubSection('top-richest-content');
         });
